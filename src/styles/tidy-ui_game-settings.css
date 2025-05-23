@@ -1,18 +1,58 @@
-/* ----------------------------------------- */
-/*  Settings                                 */
-/* ----------------------------------------- */
+/* ========================================= */
+/* Variables                                */
+/* ========================================= */
+
+:root {
+  --base-spacing-xs: 0.25rem;
+  --base-spacing-sm: 6px;
+  --base-spacing-md: 8px;
+  --base-spacing-lg: 12px;
+  --base-spacing-xl: 1rem;
+
+  --border-color-light: rgba(0, 0, 0, 0.2);
+  --border-color-medium: rgba(0, 0, 0, 0.4);
+  --border-color-dark: rgba(0, 0, 0, 0.8);
+  --border-color-divider: #7a7971;
+
+  --text-color-muted: rgba(255, 255, 255, 0.5);
+  --text-color-light: #fff;
+  --text-color-dark: #444;
+  --text-color-modal-input: #121212;
+
+  --bg-checkbox: rgba(255, 255, 255, 0.6);
+  --bg-checkbox-hover: rgba(255, 255, 255, 0.8);
+  --bg-btn-disable: rgba(255, 0, 0, 0.3);
+  --bg-btn-disable-border: rgba(255, 0, 0, 0.5);
+  --bg-btn-enable: rgba(0, 255, 0, 0.3);
+  --bg-btn-enable-border: rgba(0, 255, 0, 0.5);
+  --bg-btn-modal: rgba(0, 255, 0, 0.4);
+  --bg-btn-modal-hover: rgba(0, 255, 0, 0.3);
+  --bg-warning: rgba(255, 120, 0, 1);
+  --bg-modal: #444;
+  --bg-modal-input: #efefef;
+  --bg-modal-close: #efefef;
+  --bg-toast: rgba(100, 255, 150, 0.95);
+
+  --checkbox-size: 20px;
+  --checkbox-check-size: 16px;
+  --modal-button-height: 40px;
+}
+
+/* ========================================= */
+/* Settings                                 */
+/* ========================================= */
 
 #settings.settings-sidebar div {
-  margin: 12px 8px;
+  margin: var(--base-spacing-lg) var(--base-spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--base-spacing-sm);
 }
 
 #settings.settings-sidebar button {
   margin: 0;
+  padding: 0 var(--base-spacing-md);
   text-align: left;
-  padding: 0 8px;
   display: grid;
   grid-template-columns: 24px 1fr;
   align-items: baseline;
@@ -20,37 +60,32 @@
 }
 
 #settings .ms2t-switch-container h2 {
-  margin: 6px 0 0 0;
+  margin: var(--base-spacing-sm) 0 0;
 }
 
 #settings .game-system {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--base-spacing-xs);
 }
 
 #settings .game-system h4 {
+  margin: var(--base-spacing-xs) 0;
   font-size: 0.7rem;
   font-weight: normal;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0.25rem 0;
+  color: var(--text-color-muted);
 }
 
-#settings #combat-utility-belt h4 {
-  margin-top: 1rem;
-}
-
+#settings #combat-utility-belt h4,
 #settings button[data-action="logout"],
 #settings button[data-action="players"] {
-  margin-top: 1rem;
+  margin-top: var(--base-spacing-xl);
 }
 
-/* Game Settings Window */
-
-/* ----------------------------------------- */
-/*  Module Management                        */
-/* ----------------------------------------- */
+/* ========================================= */
+/* Module Management                        */
+/* ========================================= */
 
 #module-management {
-  min-height: 100vh;
+  min-height: 100vh; /* Consider if 100% or auto might be better depending on context */
 }
 
 #module-management .window-content form {
@@ -60,98 +95,100 @@
 }
 
 #module-management .notes {
-  flex: 0 0 1px;
+  flex: 0 0 1px; /* This technique is often used to prevent flex items from growing/shrinking unexpectedly */
   min-height: auto;
 }
 
 #module-management .package-title {
-  line-height: 20px;
   margin: 0;
+  line-height: 20px;
   text-decoration: none;
   display: flex;
   align-items: center;
 }
 
 #module-management .package-list .package-title {
-  overflow: visible;
   height: auto;
+  margin-right: var(--base-spacing-md);
+  overflow: visible;
   align-items: flex-start;
-  margin-right: 8px;
 }
 
 #module-management input.active {
   position: relative;
-  margin-right: 8px;
   top: 0;
+  margin-right: var(--base-spacing-md);
 }
 
 #module-management input[type="checkbox"] {
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  background: rgba(255, 255, 255, 0.6);
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border: 1px solid var(--border-color-medium);
+  background: var(--bg-checkbox);
   border-radius: 3px;
-  transition: border 0.3s ease, background 0.3s ease;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.3) inset;
+  transition: border 0.3s ease, background 0.3s ease;
   cursor: pointer;
-  width: 20px;
-  height: 20px;
+  position: relative; /* Added for ::after positioning */
+  vertical-align: middle; /* Helps alignment */
 }
 
 #module-management input[type="checkbox"]:hover {
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--border-color-dark);
+  background: var(--bg-checkbox-hover);
 }
 
 #module-management input[type="checkbox"]:checked {
-  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-color: var(--border-color-medium);
 }
 
 #module-management input[type="checkbox"]:checked::after {
   content: "";
   display: block;
-  background: url(../img/check-solid.svg) center no-repeat;
-  background-size: cover;
+  width: var(--checkbox-check-size);
+  height: var(--checkbox-check-size);
+  background: url(../img/check-solid.svg) center / cover no-repeat;
   position: absolute;
-  width: 16px;
-  height: 16px;
-  transform: translate(5%, 5%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Better centering */
 }
 
 #module-management .package-list {
-  padding: 0.25rem 0rem 0.25rem 0rem;
+  padding: var(--base-spacing-xs) 0;
+  margin: 0.5rem 0;
   height: auto;
   max-height: 100%;
-  margin: 0.5rem 0 0.5rem 0;
-  border-top: 1px solid #7a7971;
-  border-bottom: 1px solid #7a7971;
+  border-top: 1px solid var(--border-color-divider);
+  border-bottom: 1px solid var(--border-color-divider);
 }
 
 #module-management .package-list .package {
   position: relative;
-  padding: 0.25rem 0 0 0;
-  border-top: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding: var(--base-spacing-xs) 0 0;
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+#module-management .package-list .package:last-child {
+  border-bottom: none;
 }
 
 #module-management .package-list .package-metadata {
   list-style: none;
-  margin-top: 4px;
-}
-
-#module-management .package-list .package:last-child {
-  border: none;
+  margin-top: 4px; /* Kept as specific, could be a variable */
 }
 
 #module-management .package-list .package-description {
-  margin: 0 0 0.5rem 28px;
+  margin: 0 0 0.5rem 28px; /* Kept as specific, adjust if needed */
 }
 
 #module-management .package-list .package .tag {
-  font-size: 10px;
-  margin: 0 0.25rem 0.25rem 0;
+  margin: 0 var(--base-spacing-xs) var(--base-spacing-xs) 0;
   padding: 1px 4px 0;
+  font-size: 10px;
   line-height: 16px;
 }
 
@@ -162,44 +199,39 @@
 #module-management .mass-toggle {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: var(--base-spacing-md);
+  gap: 0.5rem; /* Using gap instead of margin on children */
+}
+
+#module-management .disable-all-modules,
+#module-management .enable-all-modules {
+  flex: 1;
 }
 
 #module-management .disable-all-modules {
-  background: rgba(255, 0, 0, 0.3);
-  border-width: 2px groove rgba(255, 0, 0, 0.5);
-  margin-right: 0.25rem;
-  flex: 1;
+  background: var(--bg-btn-disable);
+  border: 2px groove var(--bg-btn-disable-border);
 }
 
 #module-management .enable-all-modules {
-  background: rgba(0, 255, 0, 0.3);
-  border-width: 2px groove rgba(0, 255, 0, 0.5);
-  margin-left: 0.25rem;
-  flex: 1;
+  background: var(--bg-btn-enable);
+  border: 2px groove var(--bg-btn-enable-border);
 }
 
-/* ----------------------------------------- */
-/*  Module Export/Import                     */
-/* ----------------------------------------- */
+/* ========================================= */
+/* Module Export/Import                     */
+/* ========================================= */
 
 #module-management .enhanced-module-management {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: var(--base-spacing-md);
   flex: 0 0 1px;
+  gap: 0.5rem; /* Using gap */
 }
 
 #module-management .enhanced-module-management button {
-  margin: 0 0.25rem;
-}
-
-#module-management .enhanced-module-management button:first-child {
-  margin-left: 0;
-}
-
-#module-management .enhanced-module-management button:last-child {
-  margin-right: 0;
+  margin: 0; /* Removed specific margins, handled by gap now */
 }
 
 #module-management .enhanced-module-management .modules-export,
@@ -219,11 +251,11 @@
 }
 
 #module-management .warning {
-  background: rgba(255, 120, 0, 1);
-  padding: 8px;
+  margin: var(--base-spacing-md) 0;
+  padding: var(--base-spacing-md);
+  background: var(--bg-warning);
+  color: var(--text-color-light);
   font-size: 11px;
-  margin: 8px 0;
-  color: #fff;
   border-radius: 3px;
 }
 
@@ -232,30 +264,30 @@
 }
 
 #module-management #importExportModal .modal-wrap {
-  height: 100%;
-  background: #444;
-  border-radius: 5px;
-  padding: 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
+  height: 100%;
+  padding: var(--base-spacing-xl);
+  background: var(--bg-modal);
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 #module-management #importExportModal .modal-wrap #close {
-  background: #efefef;
-  color: #444;
+  position: absolute;
+  top: 10px;
+  right: -30px;
+  transform: translate(-50%, -50%);
   width: 40px;
   height: 40px;
+  background: var(--bg-modal-close);
+  color: var(--text-color-dark);
   font-size: 20px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 10px;
-  right: -30px;
-  transform: translate(-50%, -50%);
   z-index: 20;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -263,16 +295,16 @@
 
 #module-management #importExportModal .modal-wrap #exportToast {
   position: absolute;
-  background: rgba(100, 255, 150, 0.95);
-  color: #121212;
+  top: var(--base-spacing-xl);
+  right: var(--base-spacing-xl);
+  bottom: 56px; /* Adjust if needed based on button height */
+  left: var(--base-spacing-xl);
+  padding: var(--base-spacing-xl);
+  background: var(--bg-toast);
+  color: var(--text-color-modal-input);
   border-radius: 3px 3px 0 0;
-  top: 1rem;
-  right: 1rem;
-  bottom: 56px;
-  left: 1rem;
-  padding: 1rem;
   z-index: 10;
-  display: none;
+  display: none; /* Will be shown via JS */
 }
 
 #module-management #importExportModal .modal-wrap #exportToast p {
@@ -280,48 +312,47 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  margin: 0; /* Reset default p margin */
 }
 
 #module-management #importExportModal #modalIO {
-  background: #efefef;
+  flex: 1;
+  padding: var(--base-spacing-xl);
+  background: var(--bg-modal-input);
   border: none;
   border-radius: 3px 3px 0 0;
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
   resize: none;
-}
-
-#module-management #importExportModal #modalIO:focus {
+  overflow-y: auto;
   outline: none;
 }
 
 #module-management #importExportModal .export-options,
 #module-management #importExportModal .import-options {
   display: flex;
-  margin-left: -1px;
+  gap: 1px; /* Spacing between buttons */
 }
+
 #module-management #importExportModal button {
-  background: rgba(0, 255, 0, 0.4);
-  border: none;
-  border-radius: 1px solid #333;
-  color: #efefef;
-  border-radius: 0 0 3px 3px;
   flex: 1;
-  height: 40px;
-  line-height: 40px;
-  margin: 0;
-  margin-right: 1px;
+  height: var(--modal-button-height);
   padding: 0;
-  display: none;
+  margin: 0;
+  background: var(--bg-btn-modal);
+  color: var(--bg-modal-input);
+  border: none; /* Changed 'border-radius: 1px solid #333;' which was invalid */
+  border-radius: 0 0 3px 3px;
+  line-height: var(--modal-button-height);
+  display: none; /* Hidden by default */
+  cursor: pointer;
 }
 
 #module-management #importExportModal button:hover {
-  background: rgba(0, 255, 0, 0.3);
+  background: var(--bg-btn-modal-hover);
   box-shadow: none;
 }
 
+/* Only show buttons for the active mode (export or import) */
 #module-management #importExportModal.export .export-options button,
 #module-management #importExportModal.import .import-options button {
   display: block;

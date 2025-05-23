@@ -1,5 +1,8 @@
 # Changelog
 
+# 0.1.60
+- Forge 13 Version fix
+
 # 0.1.51
 
 - Module manager Display fix

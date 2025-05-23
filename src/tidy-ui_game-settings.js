@@ -3,8 +3,12 @@ var expandedModules = [];
 
 // hook on Settings Config Window
 Hooks.on("renderSettingsConfig", (app, html) => {
-  // wrap separat module settings
-  html
+  // Convert jQuery object to DOM element if needed
+  const htmlElement = html instanceof jQuery ? html[0] : html;
+  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
+  
+  // wrap separate module settings
+  $html
     .find(
       ":not(.sidebar) :not(.form-group) + .form-group, * :not(.sidebar) > .form-group:first-of-type"
     )
@@ -16,13 +20,13 @@ Hooks.on("renderSettingsConfig", (app, html) => {
     });
 
   // toggle checkboxes
-  html.find(".form-group label").each(function () {
+  $html.find(".form-group label").each(function () {
     if ($(this).next("div").find('input[type="checkbox"]').length) {
       $(this).wrapInner("<span>");
     }
   });
 
-  html.find(".form-group label span").on("click", function () {
+  $html.find(".form-group label span").on("click", function () {
     var checkbox = $(this).parent().parent().find('input[type="checkbox"]');
     checkbox.click();
   });
@@ -30,11 +34,13 @@ Hooks.on("renderSettingsConfig", (app, html) => {
 
 // hook on Module Management Window
 Hooks.on("renderModuleManagement", (app, html) => {
-  // console.log('renderModuleManagement!');
+  // Convert jQuery object to DOM element if needed
+  const htmlElement = html instanceof jQuery ? html[0] : html;
+  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
 
-  let form = html.find("form");
-  if (!html.hasClass("form")) {
-    form = html;
+  let form = $html.find("form");
+  if (!$html.hasClass("form")) {
+    form = $html;
   }
 
   let disable = `<button class="disable-all-modules">${game.i18n.localize(
@@ -53,12 +59,12 @@ Hooks.on("renderModuleManagement", (app, html) => {
     "TidyUI.toClipboard"
   )}</button><button class="modules-download-json">${game.i18n.localize(
     "TidyUI.toFile"
-  )}</button><section>`;
+  )}</button></section>`;
   let importOptions = `<section class="import-options"><button class="modules-import-json">${game.i18n.localize(
     "TidyUI.fromFile"
   )}</button><button class="modules-import-confirm">${game.i18n.localize(
     "TidyUI.activate"
-  )}</button><section>`;
+  )}</button></section>`;
   let modalExport = `<div id="importExportModal"><div class="modal-wrap"><span id="close" title="${game.i18n.localize(
     "TidyUI.close"
   )}"><i class="fas fa-times"></i></span><div id="exportToast"><p>${game.i18n.localize(
@@ -68,7 +74,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
   )}"></textarea></div></div>`;
   let warningText = `<section class="warning"><span>${game.i18n.localize(
     "TidyUI.warning"
-  )}</span> ${game.i18n.localize("TidyUI.instruction")}<section>`;
+  )}</span> ${game.i18n.localize("TidyUI.instruction")}</section>`;
 
   // add buttons
   form.prepend(modalExport);
@@ -81,12 +87,12 @@ Hooks.on("renderModuleManagement", (app, html) => {
     .find(".enhanced-module-management")
     .append(disable, enable, exportBtn, importBtn);
 
-  let disableAll = html.find(".disable-all-modules");
-  let enableAll = html.find(".enable-all-modules");
+  let disableAll = $html.find(".disable-all-modules");
+  let enableAll = $html.find(".enable-all-modules");
 
   // sorting
   // clean module names
-  let title = html.find(".package-title");
+  let title = $html.find(".package-title");
   title.each(function () {
     var titleString = $(this).text();
     var cleanString = titleString
@@ -104,15 +110,15 @@ Hooks.on("renderModuleManagement", (app, html) => {
       : -1;
   }
 
-  html
+  $html
     .find("#module-list li.package")
     .sort(Ascending_sort)
     .appendTo("#module-list");
 
-  // remove all checkboxes except fvtt uii
+  // remove all checkboxes except fvtt ui
   disableAll.on("click", function (e) {
     e.preventDefault();
-    var checkbox = $("#module-management").find(
+    var checkbox = $html.find(
       '.package:not([data-module-id="tidy-ui_game-settings"]):not([data-module-id="tidy-ui"]) input[type="checkbox"]'
     );
     checkbox.prop("checked", false);
@@ -121,7 +127,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
   // set all checkboxes
   enableAll.on("click", function (e) {
     e.preventDefault();
-    var checkbox = $("#module-management").find(
+    var checkbox = $html.find(
       '.package input[type="checkbox"]'
     );
     checkbox.prop("checked", true);
@@ -158,14 +164,14 @@ Hooks.on("renderModuleManagement", (app, html) => {
     modules = "";
     activeModules = "";
     inactiveModules = "";
-    activeModuleList = $("#module-list input:checked");
-    inactiveModuleList = $("#module-list input:not(:checked)");
+    activeModuleList = $html.find("#module-list input:checked");
+    inactiveModuleList = $html.find("#module-list input:not(:checked)");
 
     // get active Modules
     for (let i = 0; i < activeModuleList.length; i++) {
       let moduleTitle = $(activeModuleList[i]).parent().text().trim();
       let moduleId = activeModuleList[i].attributes.name.value;
-      let version = $('input[name="' + moduleId + '"')
+      let version = $html.find('input[name="' + moduleId + '"]')
         .closest(".package-overview")
         .find(".version")
         .text();
@@ -186,7 +192,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
     for (let i = 0; i < inactiveModuleList.length; i++) {
       let moduleTitle = $(inactiveModuleList[i]).parent().text().trim();
       let moduleId = inactiveModuleList[i].attributes.name.value;
-      let version = $('input[name="' + moduleId + '"')
+      let version = $html.find('input[name="' + moduleId + '"]')
         .closest(".package-overview")
         .find(".version")
         .text();
@@ -205,22 +211,31 @@ Hooks.on("renderModuleManagement", (app, html) => {
 
     // build and display copy text
     modules = `Active Modules:\n----------\n${activeModules}\n\nInactive Modules:\n----------\n${inactiveModules}`;
-    html
+    $html
       .find("#importExportModal")
       .removeClass()
       .addClass("export")
       .find("#modalIO")
       .val(modules);
 
-    html.find("#importExportModal").fadeIn();
+    $html.find("#importExportModal").fadeIn();
   });
 
   // copy list to clipboard
-  exportCopyButton.on("click", function (e) {
+  exportCopyButton.on("click", async function (e) {
     e.preventDefault();
-    html.find("#modalIO").select();
-    document.execCommand("copy");
-    html.find("#importExportModal #exportToast").fadeIn();
+    const textArea = $html.find("#modalIO")[0];
+    textArea.select();
+    
+    // Use modern clipboard API if available, fallback to execCommand
+    try {
+      await navigator.clipboard.writeText(textArea.value);
+      $html.find("#importExportModal #exportToast").fadeIn();
+    } catch (err) {
+      // Fallback to deprecated method
+      document.execCommand("copy");
+      $html.find("#importExportModal #exportToast").fadeIn();
+    }
     return false;
   });
 
@@ -232,11 +247,11 @@ Hooks.on("renderModuleManagement", (app, html) => {
   });
 
   // close the import/export window
-  $("#importExportModal #close").on("click", function (e) {
+  $html.find("#importExportModal #close").on("click", function (e) {
     e.preventDefault();
-    html.find("#importExportModal").fadeOut(function () {
-      html.find("#modalIO").val("");
-      html.find("#importExportModal #exportToast").hide();
+    $html.find("#importExportModal").fadeOut(function () {
+      $html.find("#modalIO").val("");
+      $html.find("#importExportModal #exportToast").hide();
     });
   });
 
@@ -245,13 +260,13 @@ Hooks.on("renderModuleManagement", (app, html) => {
     e.preventDefault();
     modules = "";
     jsonProvided = false;
-    html.find("#importExportModal").removeClass().addClass("import").fadeIn();
+    $html.find("#importExportModal").removeClass().addClass("import").fadeIn();
   });
 
-  // download json file
+  // import json file
   importJsonButton.on("click", function (e) {
     e.preventDefault();
-    const input = $('<input type="file">');
+    const input = $('<input type="file" accept=".json">');
     input.on("change", importGameSettings);
     input.trigger("click");
   });
@@ -269,11 +284,12 @@ Hooks.on("renderModuleManagement", (app, html) => {
         const modulesToActivate = JSON.parse(result);
         let modules = "Modules to activate \n ---------- \n\n";
 
+        modulesToImport = []; // Reset the array
         for (let i = 0; i < modulesToActivate.activeModules.length; i++) {
           modulesToImport.push(modulesToActivate["activeModules"][i]["id"]);
           modules += modulesToActivate["activeModules"][i]["title"] + "\n";
         }
-        html
+        $html
           .find("#importExportModal")
           .removeClass()
           .addClass("import")
@@ -281,7 +297,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
           .val(modules);
         jsonProvided = true;
       } catch (e) {
-        console.log("Could not parse import data.");
+        console.log("Could not parse import data.", e);
       }
     });
   }
@@ -290,50 +306,54 @@ Hooks.on("renderModuleManagement", (app, html) => {
   importConfirmButton.on("click", function (e) {
     e.preventDefault();
     if (!jsonProvided) {
-      let importPaste = html.find("#importExportModal #modalIO").val();
+      let importPaste = $html.find("#importExportModal #modalIO").val();
       if (isJSON(importPaste)) {
         console.log("is valid JSON");
-        const modulesToActivate = JSON.parse(result);
+        const modulesToActivate = JSON.parse(importPaste);
 
+        modulesToImport = []; // Reset the array
         for (let i = 0; i < modulesToActivate.activeModules.length; i++) {
           modulesToImport.push(modulesToActivate["activeModules"][i]["id"]);
         }
       } else {
         console.log("Using old format");
-        modulesToImport = importPaste
+        let processedPaste = importPaste
           .replace(/\s/g, "")
-          .replace(/--v.*?;/g, ";")
-          .slice(0, -1);
-        modulesToImport = modulesToImport.split(";");
+          .replace(/--v.*?;/g, ";");
+        
+        if (processedPaste.endsWith(";")) {
+          processedPaste = processedPaste.slice(0, -1);
+        }
+        
+        modulesToImport = processedPaste.split(";").filter(id => id.trim() !== "");
       }
     }
 
-    html.find("#module-list input").prop("checked", false);
+    $html.find("#module-list input").prop("checked", false);
     for (let i = 0; i < modulesToImport.length; i++) {
-      html
+      $html
         .find('#module-list input[name="' + modulesToImport[i] + '"]')
         .prop("checked", true);
     }
 
-    $("#importExportModal").fadeOut(function () {
-      html.find("#modalIO").val("");
+    $html.find("#importExportModal").fadeOut(function () {
+      $html.find("#modalIO").val("");
     });
   });
 
   // check if valid JSON
   function isJSON(str) {
     if (/^\s*$/.test(str)) return false;
-    str = str.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@");
-    str = str.replace(
-      /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
-      "]"
-    );
-    str = str.replace(/(?:^|:|,)(?:\s*\[)+/g, "");
-    return /^[\],:{}\s]*$/.test(str);
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   if (game.settings.get("tidy-ui_game-settings", "hideDisableAll")) {
-    html.find('button[name="deactivate"]').css("display", "none");
+    $html.find('button[name="deactivate"]').css("display", "none");
   }
 });
 
