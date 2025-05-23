@@ -8,11 +8,14 @@
   "minimumCoreVersion": "12",
   "compatibleCoreVersion": "12",
   "compatibility": {
-    "minimum": "12",
-    "verified": "13"
+    "minimum": "11",
+    "verified": "13",
+    "maximum": "13"
   },
   "styles": ["./styles/tidy-ui_game-settings.css"],
-  "esmodules": ["tidy-ui_game-settings.js"],
+  "scripts": [
+    "tidy-ui_game-settings.js"
+  ],
   "languages": [
     {
       "lang": "en",
