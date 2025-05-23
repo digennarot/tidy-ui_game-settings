@@ -9,12 +9,12 @@
   "compatibleCoreVersion": "12",
   "compatibility": {
     "minimum": "11",
-    "verified": "13",
+    "verified": "12",
     "maximum": "13"
   },
   "styles": ["./styles/tidy-ui_game-settings.css"],
   "scripts": [
-    "tidy-ui_game-settings.js"
+    "src/tidy-ui_game-settings.js"
   ],
   "languages": [
     {
