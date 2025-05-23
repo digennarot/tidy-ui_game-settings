@@ -14,7 +14,7 @@
   },
   "styles": ["./styles/tidy-ui_game-settings.css"],
   "scripts": [
-    "tidy-ui_game-settings.js"
+    "src/tidy-ui_game-settings.js"
   ],
   "languages": [
     {
