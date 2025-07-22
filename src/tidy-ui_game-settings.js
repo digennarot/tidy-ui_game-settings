@@ -32,8 +32,7 @@ Hooks.on("renderSettingsConfig", (app, html) => {
 // hook on Module Management Window
 Hooks.on("renderModuleManagement", (app, html) => {
   // Convert jQuery object to DOM element if needed
-  const htmlElement = html instanceof jQuery ? html[0] : html;
-  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
+  const $html = $(html);
 
   let form = $html.find("form");
   if (!$html.hasClass("form")) {
