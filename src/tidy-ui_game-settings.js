@@ -3,10 +3,7 @@ var expandedModules = [];
 
 // hook on Settings Config Window
 Hooks.on("renderSettingsConfig", (app, html) => {
-  // Convert jQuery object to DOM element if needed
-  const htmlElement = html instanceof jQuery ? html[0] : html;
-  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
-  
+  const $html = $(html);
   // wrap separate module settings
   $html
     .find(
