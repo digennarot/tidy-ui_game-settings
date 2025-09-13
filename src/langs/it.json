@@ -1,0 +1,25 @@
+{
+  "TidyUI.moduleSettingsActive" : {
+    "name" : "Attiva sempre la scheda Impostazioni Moduli",
+    "hint" : "Se ti capita di visitare spesso le impostazioni del moduli, potresti voler configurare questa opzione in modo da non dover fare clic per attivare la scheda ogni volta."
+  },
+  "TidyUI.hideDisableAll" : {
+    "name" : "Nascondi il pulsante \"Disattiva Tutti i Moduli\".",
+    "hint" : "Seleziona questo se vuoi nascondere \"Disattiva Tutti i Moduli\" accanto al pulsante \"Salva\"."
+  },
+  "TidyUI.uncheckAll" : "Deseleziona tutti i moduli tranne Tidy",
+  "TidyUI.checkAll" : "Seleziona tutti i moduli",
+  "TidyUI.export" : "Esporta Elenco Moduli Attivi",
+  "TidyUI.import" : "Importa Lista Moduli",
+  "TidyUI.toClipboard" :"Copia come testo",
+  "TidyUI.toFile" :"Salva come file JSON",
+  "TidyUI.fromFile" :"Importa file JSON",
+  "TidyUI.activate" :"Attiva Moduli",
+  "TidyUI.close" :"Chiudi la finestra",
+  "TidyUI.notice" :"Elenco dei moduli copiato negli appunti: ricordati di salvarlo!",
+  "TidyUI.paste" :"Incolla qui l'elenco dei moduli memorizzati (vecchio formato di testo) o carica un file JSON per impostare i moduli attivi",
+  "TidyUI.search" :"Inizia a digitare per filtrare i moduli",
+  "TidyUI.clear" :"Cancella campo di ricerca",
+  "TidyUI.warning" :"Attenzione:",
+  "TidyUI.instruction" : "Per reimportare l'elenco dei moduli devi scaricare il file JSON. Copia come testo va bene solo per la pubblicazione su Discord o simili. Se hai salvataggi nel vecchio formato di testo, verranno comunque riconosciuti quando vorrai ripristinarli."
+}
