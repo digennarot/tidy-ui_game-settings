@@ -1,26 +1,28 @@
 # Tidy UI - Game Settings
-**formerly FVTT UII - Game Settings**
 
-A module to make the game settings menu a bit more comfortale to use.
-A stand alone module from the upcoming Tidy UI suite module.
+This is a standalone module, formerly known as "FVTT UII - Game Settings," designed to improve the usability and comfort of the game settings menus within Foundry Virtual Tabletop.
 
-The buttons in the Settings Sidebar are arranged to be a little less confusing and are grouped by function.
+#### Key Features:
 
-All Input fields, and buttons are better aligned. Over all the element spacing makes reading and navigating more comfortable.
+* **Reorganized Settings Sidebar:** Buttons are grouped by function to make them more intuitive and less confusing.
+* **Improved Layout:** Input fields, buttons, and other elements are better aligned with improved spacing for easier reading and navigation.
+* **Enhanced Module Manager:**
+    * Includes a button to toggle the visibility of module information, making it faster to browse and manage installed modules.
+    * Provides "check all" and "uncheck all" functionality for modules (the Tidy UI module itself will remain checked).
+* **Collapsible Module Settings:** In the Settings Tab, individual module settings start collapsed. You can expand only the ones you need, preventing endless scrolling.
+* **Easier Interaction:** You can click on the title of a setting to toggle its checkbox.
+* **Alphabetical Sorting:** All modules in the Module Manager and the Settings Tab are sorted alphabetically by their display name.
 
-The Module Manager now has a button to toggle the Module Information so browsing and toggling your installed modules becomes easier.
-You also can ckeck and uncheck all modules at once (Tidy UI will stay checked).
+#### Supported Game System:
+* The description states that it currently supports the **dnd5e** game system.
 
-Module Settings in the Settings Tab start collapsed and are expandable so you don't have to scroll through endless checkboxes to find the one module you want to set up.
-
-You now can click the titles to check a box (of course the checkbox itself also works).
-
-All Modules in the Manager and Settings Tab are sorted by their displayed name!
-
--- currently supports the dnd5e Game System --
-
-## Installation
-See https://github.com/foundry-vtt-community/wiki/wiki/Modules#installing-modules. Open the Add-on Modules tab in the Configuration and Setup dialog. Click Install Module, paste https://raw.githubusercontent.com/sdenec/tidy-ui_game-settings/master/module.json in as the Manifest URL, then click Install.
+#### Installation Instructions:
+1.  In Foundry VTT, go to the **Configuration and Setup** screen.
+2.  Open the **Add-on Modules** tab.
+3.  Click **Install Module**.
+4.  Paste the following URL into the **Manifest URL** field:
+    `https://raw.githubusercontent.com/digennarot/tidy-ui_game-settings/master/module.json`
+5.  Click **Install**.
 
 ## Preview
 ![Sidebar](/preview/sidebar.jpg)
