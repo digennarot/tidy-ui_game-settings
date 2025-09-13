@@ -3,7 +3,11 @@
   "name": "tidy-ui_game-settings",
   "title": "Tidy UI - Game Settings",
   "description": "User Interface Improvements for the Game Settings Window",
-  "authors": [{ "name": "digennarot" }],
+  "authors": [
+    {
+      "name": "digennarot"
+    }
+  ],
   "version": "0.1.60",
   "minimumCoreVersion": "12",
   "compatibleCoreVersion": "12",
@@ -12,7 +16,9 @@
     "verified": "12",
     "maximum": "13"
   },
-  "styles": ["./styles/tidy-ui_game-settings.css"],
+  "styles": [
+    "./styles/tidy-ui_game-settings.css"
+  ],
   "scripts": [
     "src/tidy-ui_game-settings.js"
   ],
