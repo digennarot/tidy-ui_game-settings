@@ -17,7 +17,7 @@
     "maximum": "13"
   },
   "styles": [
-    "./styles/tidy-ui_game-settings.css"
+      "src/styles/tidy-ui_game-settings.css"
   ],
   "scripts": [
     "src/tidy-ui_game-settings.js"
