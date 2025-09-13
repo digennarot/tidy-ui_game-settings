@@ -41,6 +41,11 @@
       "lang": "ja",
       "name": "日本語",
       "path": "langs/ja.json"
+    },
+    {
+      "lang": "it",
+      "name": "Italian",
+      "path": "langs/it.json"
     }
   ],
   "url": "https://github.com/digennarot/tidy-ui_game-settings",
