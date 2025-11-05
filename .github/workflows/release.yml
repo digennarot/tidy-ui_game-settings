@@ -1,0 +1,69 @@
+name: Release Module
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from module.json
+        id: get-version
+        run: |
+          echo "version=$(jq -r '.version' module.json)" >> $GITHUB_OUTPUT
+
+      - name: Verify version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          MODULE_VERSION="${{ steps.get-version.outputs.version }}"
+          if [ "$TAG_VERSION" != "$MODULE_VERSION" ]; then
+            echo "Error: Tag version (v$TAG_VERSION) doesn't match module.json version ($MODULE_VERSION)"
+            exit 1
+          fi
+
+      - name: Create module zip
+        run: |
+          # Create a directory with the correct module name
+          mkdir -p tidy-ui_game-settings
+          
+          # Copy all files except .git, .github, and the directory we just created
+          rsync -av --exclude='.git' --exclude='.github' --exclude='tidy-ui_game-settings' ./ tidy-ui_game-settings/
+          
+          # Create the zip file
+          zip -r tidy-ui_game-settings.zip tidy-ui_game-settings
+          
+          # Clean up
+          rm -rf tidy-ui_game-settings
+
+      - name: Upload zip to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: tidy-ui_game-settings.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update module.json download URL
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/}"
+          
+          # Update the download URL in module.json
+          jq --arg url "https://github.com/digennarot/tidy-ui_game-settings/releases/download/$TAG_VERSION/tidy-ui_game-settings.zip" \
+             '.download = $url' module.json > module.json.tmp
+          
+          mv module.json.tmp module.json
+
+      - name: Commit updated module.json
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add module.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update download URL for ${GITHUB_REF#refs/tags/}"
+          git push origin HEAD:master
