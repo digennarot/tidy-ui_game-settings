@@ -20,10 +20,10 @@
   },
   "packMode": "nested",
   "styles": [
-    "styles/tidy-ui_game-settings.css"
+    "src/styles/tidy-ui_game-settings.css"
   ],
   "esmodules": [
-    "tidy-ui_game-settings.js"
+    "src/tidy-ui_game-settings.js"
   ],
   "languages": [
     {
