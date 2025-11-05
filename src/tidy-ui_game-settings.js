@@ -1,13 +1,17 @@
-// set up array for toggles modules
-var expandedModules = [];
+// ============================================================================
+// Tidy UI Game Settings - Enhanced Module Management (Foundry VTT v13 compatible)
+// ============================================================================
 
-// hook on Settings Config Window
+// Track expanded module sections
+let expandedModules = [];
+
+// ============================================================================
+// SETTINGS CONFIG WINDOW HANDLER
+// ============================================================================
 Hooks.on("renderSettingsConfig", (app, html) => {
-  // Convert jQuery object to DOM element if needed
-  const htmlElement = html instanceof jQuery ? html[0] : html;
-  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
-  
-  // wrap separate module settings
+  const $html = html instanceof jQuery ? html : $(html);
+
+  // Wrap module settings into sections
   $html
     .find(
       ":not(.sidebar) :not(.form-group) + .form-group, * :not(.sidebar) > .form-group:first-of-type"
@@ -19,7 +23,7 @@ Hooks.on("renderSettingsConfig", (app, html) => {
         .wrapAll('<section class="module-settings-wrapper" />');
     });
 
-  // toggle checkboxes
+  // Make labels clickable for checkboxes
   $html.find(".form-group label").each(function () {
     if ($(this).next("div").find('input[type="checkbox"]').length) {
       $(this).wrapInner("<span>");
@@ -27,336 +31,255 @@ Hooks.on("renderSettingsConfig", (app, html) => {
   });
 
   $html.find(".form-group label span").on("click", function () {
-    var checkbox = $(this).parent().parent().find('input[type="checkbox"]');
-    checkbox.click();
+    const checkbox = $(this).closest(".form-group").find('input[type="checkbox"]');
+    checkbox.trigger("click");
   });
 });
 
-// hook on Module Management Window
+// ============================================================================
+// MODULE MANAGEMENT WINDOW HANDLER
+// ============================================================================
 Hooks.on("renderModuleManagement", (app, html) => {
-  // Convert jQuery object to DOM element if needed
-  const htmlElement = html instanceof jQuery ? html[0] : html;
-  const $html = htmlElement instanceof Element ? $(htmlElement) : $(html);
-
+  const $html = html instanceof jQuery ? html : $(html);
   let form = $html.find("form");
-  if (!$html.hasClass("form")) {
-    form = $html;
-  }
+  if (!form.length) form = $html;
 
-  let disable = `<button class="disable-all-modules">${game.i18n.localize(
-    "TidyUI.uncheckAll"
-  )}</button>`;
-  let enable = `<button class="enable-all-modules">${game.i18n.localize(
-    "TidyUI.checkAll"
-  )}</button>`;
-  let exportBtn = `<button class="modules-export" title="${game.i18n.localize(
-    "TidyUI.export"
-  )}"><i class="fas fa-file-export"></i></button>`;
-  let importBtn = `<button class="modules-import" title="${game.i18n.localize(
-    "TidyUI.import"
-  )}"><i class="fas fa-file-import"></i></button>`;
-  let exportOptions = `<section class="export-options"><button class="modules-export-copy">${game.i18n.localize(
-    "TidyUI.toClipboard"
-  )}</button><button class="modules-download-json">${game.i18n.localize(
-    "TidyUI.toFile"
-  )}</button></section>`;
-  let importOptions = `<section class="import-options"><button class="modules-import-json">${game.i18n.localize(
-    "TidyUI.fromFile"
-  )}</button><button class="modules-import-confirm">${game.i18n.localize(
-    "TidyUI.activate"
-  )}</button></section>`;
-  let modalExport = `<div id="importExportModal"><div class="modal-wrap"><span id="close" title="${game.i18n.localize(
-    "TidyUI.close"
-  )}"><i class="fas fa-times"></i></span><div id="exportToast"><p>${game.i18n.localize(
-    "TidyUI.notice"
-  )}</p></div><textarea spellcheck="false" id="modalIO" placeholder="${game.i18n.localize(
-    "TidyUI.paste"
-  )}"></textarea></div></div>`;
-  let warningText = `<section class="warning"><span>${game.i18n.localize(
-    "TidyUI.warning"
-  )}</span> ${game.i18n.localize("TidyUI.instruction")}</section>`;
+  // --------------------------------------------------------------------------
+  // UI Button Definitions
+  // --------------------------------------------------------------------------
+  const t = (key) => game.i18n.localize(key);
+  const buttons = {
+    disable: `<button class="disable-all-modules">${t("TidyUI.uncheckAll")}</button>`,
+    enable: `<button class="enable-all-modules">${t("TidyUI.checkAll")}</button>`,
+    export: `<button class="modules-export" title="${t("TidyUI.export")}"><i class="fas fa-file-export"></i></button>`,
+    import: `<button class="modules-import" title="${t("TidyUI.import")}"><i class="fas fa-file-import"></i></button>`
+  };
 
-  // add buttons
+  const exportOptions = `
+    <section class="export-options">
+      <button class="modules-export-copy">${t("TidyUI.toClipboard")}</button>
+      <button class="modules-download-json">${t("TidyUI.toFile")}</button>
+    </section>`;
+
+  const importOptions = `
+    <section class="import-options">
+      <button class="modules-import-json">${t("TidyUI.fromFile")}</button>
+      <button class="modules-import-confirm">${t("TidyUI.activate")}</button>
+    </section>`;
+
+  const modalExport = `
+    <div id="importExportModal">
+      <div class="modal-wrap">
+        <span id="close" title="${t("TidyUI.close")}"><i class="fas fa-times"></i></span>
+        <div id="exportToast"><p>${t("TidyUI.notice")}</p></div>
+        <textarea spellcheck="false" id="modalIO" placeholder="${t("TidyUI.paste")}"></textarea>
+      </div>
+    </div>`;
+
+  const warningText = `
+    <section class="warning"><span>${t("TidyUI.warning")}</span> ${t("TidyUI.instruction")}</section>`;
+
+  // --------------------------------------------------------------------------
+  // Inject UI
+  // --------------------------------------------------------------------------
   form.prepend(modalExport);
-  form
-    .find("#importExportModal .modal-wrap")
-    .append(warningText, exportOptions, importOptions);
+  form.find("#importExportModal .modal-wrap").append(warningText, exportOptions, importOptions);
   form.prepend('<div class="enhanced-module-management"></div>');
+  form.find(".enhanced-module-management").append(buttons.disable, buttons.enable, buttons.export, buttons.import);
 
-  form
-    .find(".enhanced-module-management")
-    .append(disable, enable, exportBtn, importBtn);
+  const disableAll = $html.find(".disable-all-modules");
+  const enableAll = $html.find(".enable-all-modules");
 
-  let disableAll = $html.find(".disable-all-modules");
-  let enableAll = $html.find(".enable-all-modules");
-
-  // sorting
-  // clean module names
-  let title = $html.find(".package-title");
+  // --------------------------------------------------------------------------
+  // Sorting modules alphabetically
+  // --------------------------------------------------------------------------
+  const title = $html.find(".package-title");
   title.each(function () {
-    var titleString = $(this).text();
-    var cleanString = titleString
+    const clean = $(this)
+      .text()
       .toLowerCase()
       .replace(/[^\w\s]/g, "")
       .replace(/\s/g, "");
-    $(this).closest(".package").attr("data-sort-name", cleanString);
+    $(this).closest(".package").attr("data-sort-name", clean);
   });
 
-  // sort by displayed module name
-  function Ascending_sort(a, b) {
-    return $(b).attr("data-sort-name").toUpperCase() <
-      $(a).attr("data-sort-name").toUpperCase()
-      ? 1
-      : -1;
-  }
+  const sorted = $html.find("li.package").sort((a, b) =>
+    $(a).attr("data-sort-name").localeCompare($(b).attr("data-sort-name"))
+  );
+  $html.find("ul, #module-list").append(sorted);
 
-  $html
-    .find("#module-list li.package")
-    .sort(Ascending_sort)
-    .appendTo("#module-list");
-
-  // remove all checkboxes except fvtt ui
-  disableAll.on("click", function (e) {
+  // --------------------------------------------------------------------------
+  // Enable / Disable All Buttons
+  // --------------------------------------------------------------------------
+  disableAll.on("click", (e) => {
     e.preventDefault();
-    var checkbox = $html.find(
-      '.package:not([data-module-id="tidy-ui_game-settings"]):not([data-module-id="tidy-ui"]) input[type="checkbox"]'
-    );
-    checkbox.prop("checked", false);
-  });
-
-  // set all checkboxes
-  enableAll.on("click", function (e) {
-    e.preventDefault();
-    var checkbox = $html.find(
-      '.package input[type="checkbox"]'
-    );
-    checkbox.prop("checked", true);
-  });
-
-  // export module list
-  let modules = "";
-  let modulesToImport = [];
-  let activeModules = "";
-  let inactiveModules = "";
-  let activeModuleList;
-  let inactiveModuleList;
-  const json = {};
-
-  let jsonProvided = false;
-
-  let exportButton = form.find(".modules-export");
-  let importButton = form.find(".modules-import");
-  let exportMsg = form.find(".modal");
-  let exportCopyButton = form.find(".modules-export-copy");
-  let downloadJsonButton = form.find(".modules-download-json");
-  let importJsonButton = form.find(".modules-import-json");
-  let importConfirmButton = form.find(".modules-import-confirm");
-
-  // open export window and generate list
-  exportButton.on("click", function (e) {
-    e.preventDefault();
-    // create json for modules
-    let jsonActive = [];
-    let jsonInactive = [];
-    json.activeModules = jsonActive;
-    json.inactiveModules = jsonInactive;
-
-    modules = "";
-    activeModules = "";
-    inactiveModules = "";
-    activeModuleList = $html.find("#module-list input:checked");
-    inactiveModuleList = $html.find("#module-list input:not(:checked)");
-
-    // get active Modules
-    for (let i = 0; i < activeModuleList.length; i++) {
-      let moduleTitle = $(activeModuleList[i]).parent().text().trim();
-      let moduleId = activeModuleList[i].attributes.name.value;
-      let version = $html.find('input[name="' + moduleId + '"]')
-        .closest(".package-overview")
-        .find(".version")
-        .text();
-      version = version.slice(8);
-      if (i == activeModuleList.length - 1) {
-        activeModules += moduleTitle + " v" + version + ";";
-      } else {
-        activeModules += moduleTitle + " v" + version + ";\n";
-      }
-      let moduleObj = {};
-      moduleObj.id = moduleId;
-      moduleObj.title = moduleTitle;
-      moduleObj.version = version;
-      jsonActive.push(moduleObj);
-    }
-
-    // get inactive Modules
-    for (let i = 0; i < inactiveModuleList.length; i++) {
-      let moduleTitle = $(inactiveModuleList[i]).parent().text().trim();
-      let moduleId = inactiveModuleList[i].attributes.name.value;
-      let version = $html.find('input[name="' + moduleId + '"]')
-        .closest(".package-overview")
-        .find(".version")
-        .text();
-      version = version.slice(8);
-      if (i == inactiveModuleList.length - 1) {
-        inactiveModules += moduleTitle + " v" + version + ";";
-      } else {
-        inactiveModules += moduleTitle + " v" + version + ";\n";
-      }
-      let moduleObj = {};
-      moduleObj.id = moduleId;
-      moduleObj.title = moduleTitle;
-      moduleObj.version = version;
-      jsonInactive.push(moduleObj);
-    }
-
-    // build and display copy text
-    modules = `Active Modules:\n----------\n${activeModules}\n\nInactive Modules:\n----------\n${inactiveModules}`;
     $html
-      .find("#importExportModal")
-      .removeClass()
-      .addClass("export")
-      .find("#modalIO")
-      .val(modules);
-
-    $html.find("#importExportModal").fadeIn();
+      .find(
+        'li.package:not([data-module-id="tidy-ui_game-settings"]):not([data-module-id="tidy-ui"]) input[type="checkbox"]'
+      )
+      .prop("checked", false);
   });
 
-  // copy list to clipboard
-  exportCopyButton.on("click", async function (e) {
+  enableAll.on("click", (e) => {
+    e.preventDefault();
+    $html.find('li.package input[type="checkbox"]').prop("checked", true);
+  });
+
+  // --------------------------------------------------------------------------
+  // Export / Import Logic
+  // --------------------------------------------------------------------------
+  let jsonProvided = false;
+  let modulesToImport = [];
+
+  const exportButton = form.find(".modules-export");
+  const importButton = form.find(".modules-import");
+  const exportCopyButton = form.find(".modules-export-copy");
+  const downloadJsonButton = form.find(".modules-download-json");
+  const importJsonButton = form.find(".modules-import-json");
+  const importConfirmButton = form.find(".modules-import-confirm");
+
+  // Open export modal
+  exportButton.on("click", (e) => {
+    e.preventDefault();
+
+    const json = {
+      activeModules: [],
+      inactiveModules: []
+    };
+
+    const activeInputs = $html.find('li.package input[type="checkbox"]:checked');
+    const inactiveInputs = $html.find('li.package input[type="checkbox"]:not(:checked)');
+
+    activeInputs.each(function () {
+      const id = this.name;
+      const title = $(this).closest(".package").find(".package-title").text().trim();
+      const version = $(this).closest(".package").find(".version").text().replace(/^v/i, "");
+      json.activeModules.push({ id, title, version });
+    });
+
+    inactiveInputs.each(function () {
+      const id = this.name;
+      const title = $(this).closest(".package").find(".package-title").text().trim();
+      const version = $(this).closest(".package").find(".version").text().replace(/^v/i, "");
+      json.inactiveModules.push({ id, title, version });
+    });
+
+    const exportText = `Active Modules:\n----------\n${json.activeModules
+      .map((m) => `${m.title} v${m.version}`)
+      .join("\n")}\n\nInactive Modules:\n----------\n${json.inactiveModules
+      .map((m) => `${m.title} v${m.version}`)
+      .join("\n")}`;
+
+    $html.find("#importExportModal").removeClass().addClass("export").find("#modalIO").val(exportText);
+    $html.find("#importExportModal").fadeIn();
+
+    // Save JSON reference for download
+    form.data("exportJson", json);
+  });
+
+  // Copy to clipboard
+  exportCopyButton.on("click", async (e) => {
     e.preventDefault();
     const textArea = $html.find("#modalIO")[0];
     textArea.select();
-    
-    // Use modern clipboard API if available, fallback to execCommand
     try {
       await navigator.clipboard.writeText(textArea.value);
-      $html.find("#importExportModal #exportToast").fadeIn();
-    } catch (err) {
-      // Fallback to deprecated method
+    } catch {
       document.execCommand("copy");
-      $html.find("#importExportModal #exportToast").fadeIn();
     }
-    return false;
+    $html.find("#importExportModal #exportToast").fadeIn();
   });
 
-  // download json file
-  downloadJsonButton.on("click", function (e) {
+  // Download as JSON
+  downloadJsonButton.on("click", (e) => {
     e.preventDefault();
-    const moduleListFile = JSON.stringify(json, null, 2);
-    saveDataToFile(moduleListFile, "application/json", "moduleList.json");
+    const json = form.data("exportJson") || {};
+    const data = JSON.stringify(json, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "moduleList.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   });
 
-  // close the import/export window
-  $html.find("#importExportModal #close").on("click", function (e) {
+  // Close modal
+  $html.find("#importExportModal #close").on("click", (e) => {
     e.preventDefault();
-    $html.find("#importExportModal").fadeOut(function () {
+    $html.find("#importExportModal").fadeOut(() => {
       $html.find("#modalIO").val("");
       $html.find("#importExportModal #exportToast").hide();
     });
   });
 
-  // open import input
-  importButton.on("click", function (e) {
+  // Open import modal
+  importButton.on("click", (e) => {
     e.preventDefault();
-    modules = "";
     jsonProvided = false;
+    modulesToImport = [];
     $html.find("#importExportModal").removeClass().addClass("import").fadeIn();
   });
 
-  // import json file
-  importJsonButton.on("click", function (e) {
+  // Import JSON file
+  importJsonButton.on("click", (e) => {
     e.preventDefault();
     const input = $('<input type="file" accept=".json">');
-    input.on("change", importGameSettings);
+    input.on("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      file.text().then((result) => {
+        try {
+          const parsed = JSON.parse(result);
+          modulesToImport = parsed.activeModules.map((m) => m.id);
+          const list = parsed.activeModules.map((m) => m.title).join("\n");
+          $html.find("#modalIO").val(list);
+          jsonProvided = true;
+        } catch (err) {
+          console.error("Invalid JSON:", err);
+        }
+      });
+    });
     input.trigger("click");
   });
 
-  function importGameSettings() {
-    const file = this.files[0];
-    if (!file) {
-      console.log("No file provided for game settings importer.");
-      return;
-    }
-
-    readTextFromFile(file).then(async (result) => {
-      try {
-        console.log("json provided");
-        const modulesToActivate = JSON.parse(result);
-        let modules = "Modules to activate \n ---------- \n\n";
-
-        modulesToImport = []; // Reset the array
-        for (let i = 0; i < modulesToActivate.activeModules.length; i++) {
-          modulesToImport.push(modulesToActivate["activeModules"][i]["id"]);
-          modules += modulesToActivate["activeModules"][i]["title"] + "\n";
-        }
-        $html
-          .find("#importExportModal")
-          .removeClass()
-          .addClass("import")
-          .find("#modalIO")
-          .val(modules);
-        jsonProvided = true;
-      } catch (e) {
-        console.log("Could not parse import data.", e);
-      }
-    });
-  }
-
-  // Activate all pasted Modules and close window
-  importConfirmButton.on("click", function (e) {
+  // Confirm Import
+  importConfirmButton.on("click", (e) => {
     e.preventDefault();
     if (!jsonProvided) {
-      let importPaste = $html.find("#importExportModal #modalIO").val();
-      if (isJSON(importPaste)) {
-        console.log("is valid JSON");
-        const modulesToActivate = JSON.parse(importPaste);
-
-        modulesToImport = []; // Reset the array
-        for (let i = 0; i < modulesToActivate.activeModules.length; i++) {
-          modulesToImport.push(modulesToActivate["activeModules"][i]["id"]);
-        }
-      } else {
-        console.log("Using old format");
-        let processedPaste = importPaste
-          .replace(/\s/g, "")
-          .replace(/--v.*?;/g, ";");
-        
-        if (processedPaste.endsWith(";")) {
-          processedPaste = processedPaste.slice(0, -1);
-        }
-        
-        modulesToImport = processedPaste.split(";").filter(id => id.trim() !== "");
+      const inputText = $html.find("#modalIO").val();
+      try {
+        const parsed = JSON.parse(inputText);
+        modulesToImport = parsed.activeModules.map((m) => m.id);
+      } catch {
+        modulesToImport = inputText
+          .split(";")
+          .map((s) => s.trim())
+          .filter((s) => s.length);
       }
     }
 
-    $html.find("#module-list input").prop("checked", false);
-    for (let i = 0; i < modulesToImport.length; i++) {
-      $html
-        .find('#module-list input[name="' + modulesToImport[i] + '"]')
-        .prop("checked", true);
+    $html.find('li.package input[type="checkbox"]').prop("checked", false);
+    for (const id of modulesToImport) {
+      $html.find(`li.package input[name="${id}"]`).prop("checked", true);
     }
 
-    $html.find("#importExportModal").fadeOut(function () {
+    $html.find("#importExportModal").fadeOut(() => {
       $html.find("#modalIO").val("");
     });
   });
 
-  // check if valid JSON
-  function isJSON(str) {
-    if (/^\s*$/.test(str)) return false;
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
+  // Hide disable all button if configured
   if (game.settings.get("tidy-ui_game-settings", "hideDisableAll")) {
-    $html.find('button[name="deactivate"]').css("display", "none");
+    $html.find('button[name="deactivate"]').hide();
   }
 });
 
+// ============================================================================
+// REGISTER SETTINGS
+// ============================================================================
 Hooks.once("init", () => {
   game.settings.register("tidy-ui_game-settings", "hideDisableAll", {
     name: game.i18n.localize("TidyUI.hideDisableAll.name"),
