@@ -29,32 +29,32 @@
     {
       "lang": "en",
       "name": "English",
-      "path": "langs/en.json"
+      "path": "src/langs/en.json"
     },
     {
       "lang": "de",
       "name": "Deutsch",
-      "path": "langs/de.json"
+      "path": "src/langs/de.json"
     },
     {
       "lang": "es",
       "name": "Español",
-      "path": "langs/es.json"
+      "path": "src/langs/es.json"
     },
     {
       "lang": "zh-tw",
       "name": "正體中文",
-      "path": "langs/zh-tw.json"
+      "path": "src/langs/zh-tw.json"
     },
     {
       "lang": "ja",
       "name": "日本語",
-      "path": "langs/ja.json"
+      "path": "src/langs/ja.json"
     },
     {
       "lang": "it",
       "name": "Italiano",
-      "path": "langs/it.json"
+      "path": "src/langs/it.json"
     }
   ],
   "url": "https://github.com/digennarot/tidy-ui_game-settings",
