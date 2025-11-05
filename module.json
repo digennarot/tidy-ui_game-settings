@@ -9,15 +9,13 @@
     }
   ],
   "version": "0.1.70",
-  "minimumCoreVersion": "12",
-  "compatibleCoreVersion": "12",
   "compatibility": {
     "minimum": "11",
     "verified": "12",
     "maximum": "13"
   },
   "styles": [
-      "src/styles/tidy-ui_game-settings.css"
+    "src/styles/tidy-ui_game-settings.css"
   ],
   "scripts": [
     "src/tidy-ui_game-settings.js"
@@ -31,27 +29,27 @@
     {
       "lang": "de",
       "name": "Deutsch",
-      "path": "src/langs/de.json"
+      "path": "langs/de.json"
     },
     {
       "lang": "es",
       "name": "Español",
-      "path": "src/langs/es.json"
+      "path": "langs/es.json"
     },
     {
       "lang": "zh-tw",
       "name": "正體中文",
-      "path": "src/langs/zh-tw.json"
+      "path": "langs/zh-tw.json"
     },
     {
       "lang": "ja",
       "name": "日本語",
-      "path": "src/langs/ja.json"
+      "path": "langs/ja.json"
     },
     {
       "lang": "it",
-      "name": "Italian",
-      "path": "src/langs/it.json"
+      "name": "Italiano",
+      "path": "langs/it.json"
     }
   ],
   "url": "https://github.com/digennarot/tidy-ui_game-settings",
