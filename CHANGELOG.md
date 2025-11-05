@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.71
+## 0.1.71
 - Foundry VTT v13 compatibility
 - Modernized module manifest structure
 - Removed deprecated fields (`name`, `scripts`, `minimumCoreVersion`, `compatibleCoreVersion`)
