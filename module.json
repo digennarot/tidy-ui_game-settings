@@ -18,11 +18,12 @@
     "conflicts": [],
     "recommends": []
   },
+  "packMode": "nested",
   "styles": [
-    "src/styles/tidy-ui_game-settings.css"
+    "styles/tidy-ui_game-settings.css"
   ],
   "esmodules": [
-    "src/tidy-ui_game-settings.js"
+    "tidy-ui_game-settings.js"
   ],
   "languages": [
     {
@@ -58,7 +59,7 @@
   ],
   "url": "https://github.com/digennarot/tidy-ui_game-settings",
   "manifest": "https://raw.githubusercontent.com/digennarot/tidy-ui_game-settings/master/module.json",
-  "download": "https://github.com/digennarot/tidy-ui_game-settings/raw/master/tidy-ui_game-settings.zip",
+  "download": "https://github.com/digennarot/tidy-ui_game-settings/archive/refs/heads/master.zip",
   "bugs": "https://github.com/digennarot/tidy-ui_game-settings/issues",
   "changelog": "https://github.com/digennarot/tidy-ui_game-settings/blob/master/CHANGELOG.md"
 }
