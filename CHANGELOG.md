@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.72
+- Added comprehensive User Guide and Developer Guide
+- Added markdownlint to package scripts and GitHub CI
+
 ## 0.1.71
 
 - Foundry VTT v13 compatibility
@@ -13,8 +17,6 @@
 - Added Italian language support
 - Enhanced author metadata with URL
 - Added bugs and changelog URLs
-- Added comprehensive User Guide and Developer Guide
-- Added markdownlint to package scripts and GitHub CI
 
 ## 0.1.60
 
