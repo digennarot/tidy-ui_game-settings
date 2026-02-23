@@ -12,10 +12,10 @@
 #settings.settings-sidebar button {
   margin: 0;
   padding: 0 8px;
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  align-items: baseline;
-  text-align: left;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
 }
 

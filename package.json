@@ -1,0 +1,30 @@
+{
+  "name": "tidy-ui_game-settings",
+  "version": "1.0.0",
+  "description": "A comprehensive Foundry VTT module that enhances the usability and visual clarity of the game settings interface, making configuration management more intuitive and efficient.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "lint:md": "markdownlint . --ignore node_modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digennarot/tidy-ui_game-settings.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/digennarot/tidy-ui_game-settings/issues"
+  },
+  "homepage": "https://github.com/digennarot/tidy-ui_game-settings#readme",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
+    "jquery": "^4.0.0",
+    "jsdom": "^28.1.0",
+    "markdownlint-cli": "^0.47.0",
+    "vitest": "^4.0.18"
+  }
+}

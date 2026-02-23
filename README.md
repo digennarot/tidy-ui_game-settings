@@ -5,24 +5,35 @@ A comprehensive Foundry VTT module that enhances the usability and visual clarit
 ## Features
 
 ### Reorganized Settings Sidebar
+
 Settings buttons are logically grouped by function, creating a more intuitive navigation structure that reduces confusion and improves workflow efficiency.
 
 ### Improved Visual Layout
+
 Enhanced spacing, alignment, and visual hierarchy throughout the settings interface make information easier to scan and interact with. Input fields, buttons, and controls are consistently positioned for better usability.
 
 ### Advanced Module Manager
+
 - **Toggle Module Information:** Quickly show or hide module descriptions and details for faster browsing
 - **Bulk Selection Controls:** "Check all" and "uncheck all" buttons for rapid module management (Tidy UI itself remains checked for stability)
 - **Alphabetical Sorting:** Modules are automatically sorted by display name for easier location
 
 ### Collapsible Module Settings
+
 Individual module settings in the Settings Tab start in a collapsed state, allowing you to expand only what you need. This eliminates endless scrolling and makes finding specific settings much faster.
 
 ### Enhanced Interactions
+
 Click directly on setting titles to toggle their associated checkboxes—no need to precisely target small checkbox areas.
 
 ### Consistent Organization
+
 All modules appear alphabetically sorted in both the Module Manager and Settings Tab, providing a predictable and organized experience.
+
+## Documentation
+
+- [User Guide](docs/USER_GUIDE.md): Detailed instructions on module features, export/import management, and UI changes.
+- [Developer Guide](docs/DEVELOPER_GUIDE.md): Technical overview covering architecture, hooks, state management, and tests.
 
 ## Compatibility
 
@@ -33,16 +44,20 @@ All modules appear alphabetically sorted in both the Module Manager and Settings
 ## Installation
 
 ### Method 1: Via Manifest URL
+
 1. Open Foundry VTT and navigate to the **Configuration and Setup** screen
 2. Select the **Add-on Modules** tab
 3. Click **Install Module**
 4. Paste the following URL into the **Manifest URL** field:
-```
+
+   ```text
    https://raw.githubusercontent.com/digennarot/tidy-ui_game-settings/master/module.json
-```
+   ```
+
 5. Click **Install**
 
 ### Method 2: Via Module Browser
+
 1. In Foundry VTT, open the **Add-on Modules** tab
 2. Search for "Tidy UI - Game Settings"
 3. Click **Install**
@@ -50,21 +65,27 @@ All modules appear alphabetically sorted in both the Module Manager and Settings
 ## Preview
 
 ### Reorganized Sidebar
+
 ![Sidebar](/preview/sidebar.jpg)
 
 ### Module Management Interface
+
 ![Module Management](/preview/module-management-compressed.jpg)
 
 ### Core Settings View
+
 ![Settings - Core](/preview/core.jpg)
 
 ### System Settings View
+
 ![Settings - System](/preview/system.jpg)
 
-### Collapsible Module Settings
+### Collapsible Module Settings View
+
 ![Settings - Modules (compressed)](/preview/mod_compressed.jpg)
 
 ### Expanded Module Settings
+
 ![Settings - Modules (expanded)](/preview/mod-expanded.jpg)
 
 ## Support
@@ -78,7 +99,7 @@ All modules appear alphabetically sorted in both the Module Manager and Settings
 
 ## License
 
-[Add license information here]
+This project is licensed under the ISC License.
 
 ---
 

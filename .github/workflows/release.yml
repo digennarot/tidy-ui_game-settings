@@ -14,6 +14,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Ensure we checkout the branch rather than detached HEAD
+          # to safely commit back to it later if required.
+          # Note: Since the event is 'release', GITHUB_REF is the tag.
+          # But for the checkout itself we will leave it default which checks out the tag.
+          fetch-depth: 0
 
       - name: Get version from module.json
         id: get-version
@@ -22,12 +28,24 @@ jobs:
 
       - name: Verify version matches tag
         run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          # Robust way to strip 'refs/tags/' and then an optional 'v' prefix
+          TAG_VERSION="${GITHUB_REF#refs/tags/}"
+          TAG_VERSION="${TAG_VERSION#v}"
           MODULE_VERSION="${{ steps.get-version.outputs.version }}"
           if [ "$TAG_VERSION" != "$MODULE_VERSION" ]; then
-            echo "Error: Tag version (v$TAG_VERSION) doesn't match module.json version ($MODULE_VERSION)"
+            echo "Error: Tag version ($TAG_VERSION) doesn't match module.json version ($MODULE_VERSION)"
             exit 1
           fi
+
+      - name: Update module.json download URL
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/}"
+          
+          # Update the download URL in module.json
+          jq --arg url "https://github.com/digennarot/tidy-ui_game-settings/releases/download/$TAG_VERSION/tidy-ui_game-settings.zip" \
+             '.download = $url' module.json > module.json.tmp
+          
+          mv module.json.tmp module.json
 
       - name: Create module zip
         run: |
@@ -49,16 +67,6 @@ jobs:
           files: tidy-ui_game-settings.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update module.json download URL
-        run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/}"
-          
-          # Update the download URL in module.json
-          jq --arg url "https://github.com/digennarot/tidy-ui_game-settings/releases/download/$TAG_VERSION/tidy-ui_game-settings.zip" \
-             '.download = $url' module.json > module.json.tmp
-          
-          mv module.json.tmp module.json
 
       - name: Commit updated module.json
         run: |

@@ -1,13 +1,10 @@
-// Set up array for toggle modules
-const expandedModules = [];
-
 // Hook on Settings Config Window
 Hooks.on("renderSettingsConfig", (app, html) => {
   // Ensure html is a jQuery object
-  html = $(html);
-  
+  const $html = $(html);
+
   // Wrap separate module settings
-  html
+  $html
     .find(
       ":not(.sidebar) :not(.form-group) + .form-group, * :not(.sidebar) > .form-group:first-of-type"
     )
@@ -19,13 +16,13 @@ Hooks.on("renderSettingsConfig", (app, html) => {
     });
 
   // Toggle checkboxes
-  html.find(".form-group label").each(function () {
+  $html.find(".form-group label").each(function () {
     if ($(this).next("div").find('input[type="checkbox"]').length) {
       $(this).wrapInner("<span>");
     }
   });
 
-  html.find(".form-group label span").on("click", function () {
+  $html.find(".form-group label span").on("click", function () {
     const checkbox = $(this).parent().parent().find('input[type="checkbox"]');
     checkbox.click();
   });
@@ -34,42 +31,42 @@ Hooks.on("renderSettingsConfig", (app, html) => {
 // Hook on Module Management Window
 Hooks.on("renderModuleManagement", (app, html) => {
   // Ensure html is a jQuery object
-  html = $(html);
-  
-  let form = html.find("form");
-  if (!form.length || !html.hasClass("form")) {
-    form = html;
+  const $html = $(html);
+
+  let form = $html.find("form");
+  if (!form.length || !$html.hasClass("form")) {
+    form = $html;
   }
 
   // Button HTML templates
   const disable = `<button class="disable-all-modules">${game.i18n.localize(
     "TidyUI.uncheckAll"
   )}</button>`;
-  
+
   const enable = `<button class="enable-all-modules">${game.i18n.localize(
     "TidyUI.checkAll"
   )}</button>`;
-  
+
   const exportBtn = `<button class="modules-export" title="${game.i18n.localize(
     "TidyUI.export"
   )}"><i class="fas fa-file-export"></i></button>`;
-  
+
   const importBtn = `<button class="modules-import" title="${game.i18n.localize(
     "TidyUI.import"
   )}"><i class="fas fa-file-import"></i></button>`;
-  
+
   const exportOptions = `<section class="export-options" style="display: none;"><button class="modules-export-copy">${game.i18n.localize(
     "TidyUI.toClipboard"
   )}</button><button class="modules-download-json">${game.i18n.localize(
     "TidyUI.toFile"
   )}</button></section>`;
-  
+
   const importOptions = `<section class="import-options" style="display: none;"><button class="modules-import-json">${game.i18n.localize(
     "TidyUI.fromFile"
   )}</button><button class="modules-import-confirm">${game.i18n.localize(
     "TidyUI.activate"
   )}</button></section>`;
-  
+
   const modalExport = `<div id="importExportModal" style="display: none;"><div class="modal-wrap"><span id="close" title="${game.i18n.localize(
     "TidyUI.close"
   )}"><i class="fas fa-times"></i></span><div id="exportToast" style="display: none;"><p>${game.i18n.localize(
@@ -77,7 +74,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
   )}</p></div><textarea spellcheck="false" id="modalIO" placeholder="${game.i18n.localize(
     "TidyUI.paste"
   )}"></textarea></div></div>`;
-  
+
   const warningText = `<section class="warning"><span>${game.i18n.localize(
     "TidyUI.warning"
   )}</span> ${game.i18n.localize("TidyUI.instruction")}</section>`;
@@ -93,11 +90,11 @@ Hooks.on("renderModuleManagement", (app, html) => {
     .find(".enhanced-module-management")
     .append(disable, enable, exportBtn, importBtn);
 
-  const disableAll = html.find(".disable-all-modules");
-  const enableAll = html.find(".enable-all-modules");
+  const disableAll = $html.find(".disable-all-modules");
+  const enableAll = $html.find(".enable-all-modules");
 
   // Sorting - clean module names
-  const title = html.find(".package-title");
+  const title = $html.find(".package-title");
   title.each(function () {
     const titleString = $(this).text();
     const cleanString = titleString
@@ -109,13 +106,12 @@ Hooks.on("renderModuleManagement", (app, html) => {
 
   // Sort by displayed module name
   function ascendingSort(a, b) {
-    return $(b).attr("data-sort-name").toUpperCase() <
-      $(a).attr("data-sort-name").toUpperCase()
-      ? 1
-      : -1;
+    const aName = a.getAttribute("data-sort-name") || "";
+    const bName = b.getAttribute("data-sort-name") || "";
+    return aName < bName ? -1 : aName > bName ? 1 : 0;
   }
 
-  const packageList = html.find("#module-list li.package, .package-list li.package");
+  const packageList = $html.find("#module-list li.package, .package-list li.package");
   if (packageList.length > 0) {
     const parent = packageList.first().parent();
     packageList.sort(ascendingSort).appendTo(parent);
@@ -152,7 +148,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
   // Open export window and generate list
   exportButton.on("click", function (e) {
     e.preventDefault();
-    
+
     // Create JSON for modules
     const jsonActive = [];
     const jsonInactive = [];
@@ -167,67 +163,42 @@ Hooks.on("renderModuleManagement", (app, html) => {
     console.log("Active modules found:", activeModuleList.length);
     console.log("Inactive modules found:", inactiveModuleList.length);
 
-    // Get active modules
-    for (let i = 0; i < activeModuleList.length; i++) {
-      const checkbox = $(activeModuleList[i]);
-      const packageEl = checkbox.closest(".package");
-      const moduleTitle = packageEl.find(".package-title").text().trim();
-      const moduleId = checkbox.attr("name");
-      let version = packageEl.find(".tag.version").text().trim();
-      
-      if (!version) {
-        version = packageEl.find(".version").text().trim();
+    function extractModulesData(moduleList, jsonTarget) {
+      let modulesString = "";
+      for (let i = 0; i < moduleList.length; i++) {
+        const checkbox = $(moduleList[i]);
+        const packageEl = checkbox.closest(".package");
+        const moduleTitle = packageEl.find(".package-title").text().trim();
+        const moduleId = checkbox.attr("name");
+        let version = packageEl.find(".tag.version").text().trim();
+
+        if (!version) {
+          version = packageEl.find(".version").text().trim();
+        }
+
+        // Remove "Version " prefix if present
+        if (version.startsWith("Version ")) {
+          version = version.substring(8);
+        }
+
+        if (i === moduleList.length - 1) {
+          modulesString += moduleTitle + " v" + version + ";";
+        } else {
+          modulesString += moduleTitle + " v" + version + ";\n";
+        }
+
+        const moduleObj = {
+          id: moduleId,
+          title: moduleTitle,
+          version: version
+        };
+        jsonTarget.push(moduleObj);
       }
-      
-      // Remove "Version " prefix if present
-      if (version.startsWith("Version ")) {
-        version = version.substring(8);
-      }
-      
-      if (i === activeModuleList.length - 1) {
-        activeModules += moduleTitle + " v" + version + ";";
-      } else {
-        activeModules += moduleTitle + " v" + version + ";\n";
-      }
-      
-      const moduleObj = {
-        id: moduleId,
-        title: moduleTitle,
-        version: version
-      };
-      jsonActive.push(moduleObj);
+      return modulesString;
     }
 
-    // Get inactive modules
-    for (let i = 0; i < inactiveModuleList.length; i++) {
-      const checkbox = $(inactiveModuleList[i]);
-      const packageEl = checkbox.closest(".package");
-      const moduleTitle = packageEl.find(".package-title").text().trim();
-      const moduleId = checkbox.attr("name");
-      let version = packageEl.find(".tag.version").text().trim();
-      
-      if (!version) {
-        version = packageEl.find(".version").text().trim();
-      }
-      
-      // Remove "Version " prefix if present
-      if (version.startsWith("Version ")) {
-        version = version.substring(8);
-      }
-      
-      if (i === inactiveModuleList.length - 1) {
-        inactiveModules += moduleTitle + " v" + version + ";";
-      } else {
-        inactiveModules += moduleTitle + " v" + version + ";\n";
-      }
-      
-      const moduleObj = {
-        id: moduleId,
-        title: moduleTitle,
-        version: version
-      };
-      jsonInactive.push(moduleObj);
-    }
+    activeModules = extractModulesData(activeModuleList, jsonActive);
+    inactiveModules = extractModulesData(inactiveModuleList, jsonInactive);
 
     // Build and display copy text
     const modules = `Active Modules:\n----------\n${activeModules}\n\nInactive Modules:\n----------\n${inactiveModules}`;
@@ -238,17 +209,27 @@ Hooks.on("renderModuleManagement", (app, html) => {
       .find("#modalIO")
       .val(modules);
 
-    html.find("#importExportModal").show();
-    html.find(".export-options").show();
-    html.find(".import-options").hide();
+    $html.find("#importExportModal").show();
+    $html.find(".export-options").show();
+    $html.find(".import-options").hide();
   });
 
   // Copy list to clipboard
   exportCopyButton.on("click", function (e) {
     e.preventDefault();
-    html.find("#modalIO").select();
-    document.execCommand("copy");
-    html.find("#importExportModal #exportToast").fadeIn();
+    const copyText = $html.find("#modalIO").val();
+
+    // Modern Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(copyText).then(() => {
+        $html.find("#importExportModal #exportToast").fadeIn();
+      });
+    } else {
+      // Fallback
+      $html.find("#modalIO").select();
+      document.execCommand("copy");
+      $html.find("#importExportModal #exportToast").fadeIn();
+    }
     return false;
   });
 
@@ -262,9 +243,9 @@ Hooks.on("renderModuleManagement", (app, html) => {
   // Close the import/export window
   $("#importExportModal #close").on("click", function (e) {
     e.preventDefault();
-    html.find("#importExportModal").fadeOut(function () {
-      html.find("#modalIO").val("");
-      html.find("#importExportModal #exportToast").hide();
+    $html.find("#importExportModal").fadeOut(function () {
+      $html.find("#modalIO").val("");
+      $html.find("#importExportModal #exportToast").hide();
     });
   });
 
@@ -273,9 +254,9 @@ Hooks.on("renderModuleManagement", (app, html) => {
     e.preventDefault();
     modulesToImport = [];
     jsonProvided = false;
-    html.find("#importExportModal").removeClass().addClass("import").show();
-    html.find(".import-options").show();
-    html.find(".export-options").hide();
+    $html.find("#importExportModal").removeClass().addClass("import").show();
+    $html.find(".import-options").show();
+    $html.find(".export-options").hide();
   });
 
   // Import JSON file
@@ -293,7 +274,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
       return;
     }
 
-    readTextFromFile(file).then(async (result) => {
+    readTextFromFile(file).then((result) => {
       try {
         console.log("JSON provided");
         const modulesToActivate = JSON.parse(result);
@@ -304,8 +285,8 @@ Hooks.on("renderModuleManagement", (app, html) => {
           modulesToImport.push(modulesToActivate.activeModules[i].id);
           modules += modulesToActivate.activeModules[i].title + "\n";
         }
-        
-        html
+
+        $html
           .find("#importExportModal")
           .removeClass()
           .addClass("import")
@@ -322,25 +303,28 @@ Hooks.on("renderModuleManagement", (app, html) => {
   // Activate all pasted modules and close window
   importConfirmButton.on("click", function (e) {
     e.preventDefault();
-    
+
     if (!jsonProvided) {
-      const importPaste = html.find("#importExportModal #modalIO").val();
-      
+      const importPaste = $html.find("#importExportModal #modalIO").val();
+
       if (!importPaste || importPaste.trim() === "") {
         ui.notifications.warn("Please provide module data to import.");
         return;
       }
-      
+
       if (isJSON(importPaste)) {
         console.log("Valid JSON detected");
         try {
           const modulesToActivate = JSON.parse(importPaste);
           modulesToImport = [];
-          
+
           if (modulesToActivate.activeModules && Array.isArray(modulesToActivate.activeModules)) {
             for (let i = 0; i < modulesToActivate.activeModules.length; i++) {
               modulesToImport.push(modulesToActivate.activeModules[i].id);
             }
+          } else {
+            ui.notifications.error("Imported JSON is missing the 'activeModules' array.");
+            return;
           }
         } catch (e) {
           console.error("Error parsing JSON:", e);
@@ -348,32 +332,27 @@ Hooks.on("renderModuleManagement", (app, html) => {
           return;
         }
       } else {
-        console.log("Using old format");
-        modulesToImport = importPaste
-          .replace(/\s/g, "")
-          .replace(/--v.*?;/g, ";")
-          .slice(0, -1)
-          .split(";")
-          .filter(m => m.length > 0);
+        ui.notifications.error("Paste format unrecognized. Please paste the valid JSON code generated by an export.");
+        return;
       }
     }
 
     // Uncheck all modules first
-    html.find(".package-list input, #module-list input").prop("checked", false);
-    
+    $html.find(".package-list input, #module-list input").prop("checked", false);
+
     // Check imported modules
     for (let i = 0; i < modulesToImport.length; i++) {
-      html
+      $html
         .find('input[name="' + modulesToImport[i] + '"]')
         .prop("checked", true);
     }
 
     $("#importExportModal").fadeOut(function () {
-      html.find("#modalIO").val("");
+      $html.find("#modalIO").val("");
       modulesToImport = [];
       jsonProvided = false;
     });
-    
+
     ui.notifications.info(`Activated ${modulesToImport.length} modules. Don't forget to save!`);
   });
 
@@ -390,7 +369,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
 
   // Hide disable all button if setting is enabled
   if (game.settings.get("tidy-ui_game-settings", "hideDisableAll")) {
-    html.find('button[name="deactivate"]').css("display", "none");
+    $html.find('button[name="deactivate"]').css("display", "none");
   }
 });
 
