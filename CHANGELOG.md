@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.72
+
 - Added comprehensive User Guide and Developer Guide
 - Added markdownlint to package scripts and GitHub CI
 
