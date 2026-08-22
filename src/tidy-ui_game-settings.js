@@ -202,7 +202,7 @@ Hooks.on("renderModuleManagement", (app, html) => {
 
     // Build and display copy text
     const modules = `Active Modules:\n----------\n${activeModules}\n\nInactive Modules:\n----------\n${inactiveModules}`;
-    html
+    $html
       .find("#importExportModal")
       .removeClass()
       .addClass("export")
