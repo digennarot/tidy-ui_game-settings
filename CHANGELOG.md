@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.73
+
+- Foundry VTT 14 compatibility
+- Fixed export button jQuery reference
+- Fixed markdown formatting in CHANGELOG
+
 ## 0.1.72
 
 - Added comprehensive User Guide and Developer Guide
