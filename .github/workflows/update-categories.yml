@@ -1,0 +1,53 @@
+name: Update Package Categories
+
+# Refreshes src/data/package-categories.js from foundryvtt.com and commits it once tests pass,
+# so releases always package data that is in the repository and tested
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+concurrency:
+  group: update-categories
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh official package categories
+        run: npm run update:categories
+
+      - name: Run tests
+        run: npm test
+
+      - name: Commit changes
+        run: |
+          git add src/data/package-categories.js
+          if git diff --staged --quiet; then
+            echo "Package categories already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: refresh official package categories"
+          git push origin master

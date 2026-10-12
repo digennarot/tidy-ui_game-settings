@@ -20,14 +20,24 @@ When you open the **Manage Modules** window, you will notice several new interac
 
 ### Module Categories
 
-A row of category buttons above the module list filters it to one category: **All**, **PF2e**, **D&D**, **System agnostic**, **Other systems**, **Adventures**, **Sounds** and **Visual improvements**. Each button shows how many modules it contains, and each module shows its categories as coloured tags. A module can belong to several categories.
+A row of category buttons above the module list filters it: **All**, then the system group (**PF2e**, **D&D**, **System agnostic**, **Other systems**) and the content group (**Adventures**, **Sounds**, **Visual improvements**). Each button shows how many modules it contains, and each module shows its categories as coloured tags. A module can belong to several categories.
+
+Click several buttons to combine them, and click an active button again to turn it off:
+
+- Buttons in the same group add up: **PF2e** + **D&D** shows the modules for either system.
+- Buttons in different groups narrow down: **PF2e** + **Adventures** shows only PF2e adventures.
+- **All** clears the selection.
+
+The number on each button tells how many modules you would see by turning it on with the current selection.
 
 Categories are detected automatically:
 
 - **PF2e / D&D / Other systems:** from the systems the module declares in its manifest. Modules that declare no system are matched by keywords such as "pf2e" or "5e" in their name and description, and otherwise count as **System agnostic**.
-- **Adventures:** the module contains Adventure compendiums, or its name mentions an adventure or one-shot.
-- **Sounds:** the module contains Playlist compendiums, or its name mentions sounds, music or ambience.
-- **Visual improvements:** the name or description mentions visual effects, animations, lighting, particles and similar.
+- **Adventures:** the module is listed under *Adventures* on [foundryvtt.com](https://foundryvtt.com/packages/tag/adventures) and ships Scene or Adventure compendiums, contains Adventure compendiums, or its name mentions an adventure or one-shot.
+- **Sounds:** the module is listed under *Audio Improvements* on [foundryvtt.com](https://foundryvtt.com/packages/tag/audio), contains Playlist compendiums, or its name mentions sounds, music or ambience.
+- **Visual improvements:** the module is listed under *Visual Effects* on [foundryvtt.com](https://foundryvtt.com/packages/tag/visuals), or its name or description mentions visual effects, animations, lighting, particles and similar.
+
+The foundryvtt.com categories are chosen by each module's author and are bundled with Tidy UI and refreshed monthly. No network request is made while you play.
 
 Detection is a best guess. A GM can fix it with the tag icon next to a module's tags: toggle the categories that apply, or click **Reset to automatic** to go back to detection. These choices are saved for the world.
 

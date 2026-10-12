@@ -1,6 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import $ from 'jquery';
 
+// Fixed official foundryvtt.com categories, so tests do not depend on the scraped data
+vi.mock('../src/data/package-categories.js', () => ({
+    OFFICIAL_CATEGORIES: {
+        adventures: ['tagged-tool', 'tagged-adventure'],
+        sounds: [],
+        visual: ['tagged-visual'],
+    },
+}));
+
 describe('tidy-ui_game-settings', () => {
     beforeEach(async () => {
         // Reset mocks and state
@@ -15,6 +24,7 @@ describe('tidy-ui_game-settings', () => {
     afterEach(() => {
         delete globalThis.game.modules;
         delete globalThis.game.user;
+        globalThis.game.settings.get.mockImplementation(() => false);
     });
 
     it('registers the required hooks', () => {
@@ -160,6 +170,9 @@ describe('tidy-ui_game-settings', () => {
             'ambience': { title: 'Ambient Soundscapes', relationships: { systems: new Set() }, packs: new Set([{ type: 'Playlist' }]) },
             'swade-tool': { title: 'Savage Helper', relationships: { systems: new Set([{ id: 'swade' }]) }, packs: new Set() },
             'tidy-ui': { title: 'Tidy UI', description: 'A cleaner user interface with active effects support', relationships: { systems: new Set() }, packs: new Set() },
+            'tagged-visual': { title: 'Plain Name', relationships: { systems: new Set() }, packs: new Set() },
+            'tagged-tool': { title: 'Name Generator', relationships: { systems: new Set() }, packs: new Set([{ type: 'RollTable' }]) },
+            'tagged-adventure': { title: 'The Lost Mine', relationships: { systems: new Set() }, packs: new Set([{ type: 'Scene' }]) },
             'fancy-fx': { title: 'Sequencer', description: '<p>Play visual effects on the canvas</p>', relationships: { systems: new Set() }, packs: new Set() },
         };
 
@@ -192,8 +205,13 @@ describe('tidy-ui_game-settings', () => {
             expect(categoriesOf(html, 'ambience')).toEqual(['agnostic', 'sounds']);
             expect(categoriesOf(html, 'fancy-fx')).toEqual(['agnostic', 'visual']);
             expect(categoriesOf(html, 'swade-tool')).toEqual(['other']);
+            // Official foundryvtt.com categories, no keyword in the manifest
+            expect(categoriesOf(html, 'tagged-visual')).toEqual(['agnostic', 'visual']);
+            expect(categoriesOf(html, 'tagged-adventure')).toEqual(['agnostic', 'adventures']);
+            // Tagged Adventures but ships no scenes or adventures
+            expect(categoriesOf(html, 'tagged-tool')).toEqual(['agnostic']);
             expect(categoriesOf(html, 'tidy-ui')).toEqual(['agnostic']);
-            expect(html.find('.tidy-category[data-category="agnostic"] .tidy-category-count').text()).toBe('3');
+            expect(html.find('.tidy-category[data-category="agnostic"] .tidy-category-count').text()).toBe('6');
         });
 
         it('filters the list and limits check all to the visible category', () => {
@@ -228,6 +246,53 @@ describe('tidy-ui_game-settings', () => {
                 )
             );
         });
+        it('combines filters: OR within a group, AND across groups', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+            const click = (category) => html.find(`.tidy-category[data-category="${category}"]`).trigger('click');
+            const shown = () => html.find('.package:not(.tidy-filtered-out)').map((i, el) => el.dataset.moduleId).get().sort();
+
+            click('pf2e');
+            click('dnd');
+            expect(shown()).toEqual(['dnd-tool', 'pf2e-adventure']);
+
+            click('adventures');
+            expect(shown()).toEqual(['pf2e-adventure']);
+            expect(html.find('.tidy-category.active').length).toBe(3);
+
+            // Clicking an active button deselects it
+            click('adventures');
+            expect(shown()).toEqual(['dnd-tool', 'pf2e-adventure']);
+
+            click('all');
+            expect(html.find('.tidy-filtered-out').length).toBe(0);
+            expect(html.find('.tidy-category.active').attr('data-category')).toBe('all');
+        });
+
+        it('counts what each button would show with the current selection', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+            const count = (category) => html.find(`.tidy-category[data-category="${category}"] .tidy-category-count`).text();
+
+            expect(count('adventures')).toBe('2');
+            html.find('.tidy-category[data-category="pf2e"]').trigger('click');
+            expect(count('adventures')).toBe('1');
+            // Same group as the selection: still the full count
+            expect(count('dnd')).toBe('1');
+            expect(count('all')).toBe(String(html.find('.package').length));
+        });
+
+        it('ignores unknown categories in saved overrides', () => {
+            globalThis.game.settings.get.mockImplementation((module, key) =>
+                key === 'moduleCategories' ? { 'dnd-tool': ['visuals', 'sounds', 'dnd'] } : false
+            );
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            expect(categoriesOf(html, 'dnd-tool')).toEqual(['dnd', 'sounds']);
+            expect(html.find('.tidy-category-count').text()).not.toContain('NaN');
+        });
+
         it('skips modules hidden by Foundry when checking all', () => {
             const html = buildHtml();
             globalThis.Hooks.callAll('renderModuleManagement', null, html);

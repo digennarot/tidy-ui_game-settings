@@ -1,7 +1,22 @@
+import { OFFICIAL_CATEGORIES } from "./data/package-categories.js";
+
 const MODULE_ID = "tidy-ui_game-settings";
 
 // Module categories in display order; "all" is the unfiltered view
 const CATEGORIES = ["all", "pf2e", "dnd", "agnostic", "other", "adventures", "sounds", "visual"];
+
+// Filter groups: selections add up within a group (OR) and narrow down across groups (AND),
+// so PF2e + D&D shows both systems while PF2e + Adventures shows only PF2e adventures
+const CATEGORY_GROUPS = [
+  ["pf2e", "dnd", "agnostic", "other"],
+  ["adventures", "sounds", "visual"],
+];
+
+// Official foundryvtt.com categories (refreshed with npm run update:categories), as sets for fast lookups
+const OFFICIAL_CATEGORY_SETS = Object.entries(OFFICIAL_CATEGORIES).map(([category, ids]) => [
+  category,
+  new Set(ids),
+]);
 
 // System keywords are matched against id, title and description
 const PF2E_PATTERN = /\b(pf2e?|pathfinder 2e?|pathfinder second edition)\b/i;
@@ -34,17 +49,31 @@ function detectCategories(moduleId, packageEl) {
     if (!categories.size) categories.add("agnostic");
   }
 
+  // Categories picked by the authors on foundryvtt.com; the checks below catch untagged modules.
+  // Authors also tag tools as adventures, so that tag only counts for modules shipping scenes or adventures.
+  const shipsAdventureContent = !mod || packTypes.includes("Adventure") || packTypes.includes("Scene");
+  for (const [category, ids] of OFFICIAL_CATEGORY_SETS) {
+    if (!ids.has(moduleId)) continue;
+    if (category === "adventures" && !shipsAdventureContent) continue;
+    categories.add(category);
+  }
+
   if (packTypes.includes("Adventure") || ADVENTURE_PATTERN.test(title)) categories.add("adventures");
   if (packTypes.includes("Playlist") || SOUND_PATTERN.test(title)) categories.add("sounds");
   if (VISUAL_PATTERN.test(text)) categories.add("visual");
 
-  return [...categories];
+  return CATEGORIES.filter((category) => categories.has(category));
 }
 
 // Local copy of the saved overrides, so quick successive edits never read a stale setting
 let categoryOverrides = null;
 let pendingSaves = Promise.resolve();
 let pendingSaveCount = 0;
+
+// Keep only known categories, in display order (saved overrides may predate a rename)
+function normalizeCategories(categories) {
+  return CATEGORIES.filter((category) => category !== "all" && categories.includes(category));
+}
 
 function loadCategoryOverrides() {
   // Keep the local copy while a save is in flight, the setting is not updated yet
@@ -86,13 +115,24 @@ function setupModuleCategories($html, form) {
   const canEdit = game.user?.isGM ?? false;
 
   const previousBar = form.find(".tidy-category-filter");
-  let activeFilter = previousBar.find(".tidy-category.active").attr("data-category") || "all";
+  // Selected categories; empty means "all"
+  const activeFilters = new Set(
+    previousBar
+      .find(".tidy-category.active")
+      .map((i, el) => el.getAttribute("data-category"))
+      .get()
+      .filter((category) => category !== "all")
+  );
   previousBar.remove();
   packages.find(".tidy-category-tags").remove();
   packages.children(".tidy-category-editor").remove();
 
   const filterBar = $('<nav class="tidy-category-filter"></nav>');
   for (const category of CATEGORIES) {
+    // Separate "All" and each group visually
+    if (CATEGORY_GROUPS.some((group) => group[0] === category)) {
+      filterBar.append('<span class="tidy-category-separator"></span>');
+    }
     filterBar.append(
       `<button type="button" class="tidy-category" data-category="${category}">${categoryLabel(
         category
@@ -125,22 +165,37 @@ function setupModuleCategories($html, form) {
     }
   }
 
+  // ignoredGroup lets a button count what it would show: its group is replaced by the button itself
+  function matchesFilters(categories, ignoredGroup = null) {
+    return CATEGORY_GROUPS.every((group) => {
+      if (group === ignoredGroup) return true;
+      const selected = group.filter((category) => activeFilters.has(category));
+      return !selected.length || selected.some((category) => categories.includes(category));
+    });
+  }
+
   function refreshFilter() {
     const counts = Object.fromEntries(CATEGORIES.map((category) => [category, 0]));
     counts.all = packages.length;
 
     for (const el of packages) {
       const categories = categoryMap.get(el);
-      for (const category of categories) counts[category]++;
-      el.classList.toggle(
-        "tidy-filtered-out",
-        activeFilter !== "all" && !categories.includes(activeFilter)
-      );
+      el.classList.toggle("tidy-filtered-out", !matchesFilters(categories));
+
+      // Each button counts its modules that also match the selection in the other group
+      for (const group of CATEGORY_GROUPS) {
+        if (!matchesFilters(categories, group)) continue;
+        for (const category of group) {
+          if (categories.includes(category)) counts[category]++;
+        }
+      }
     }
 
     filterBar.find(".tidy-category").each(function () {
       const category = this.getAttribute("data-category");
-      this.classList.toggle("active", category === activeFilter);
+      const active = category === "all" ? !activeFilters.size : activeFilters.has(category);
+      this.classList.toggle("active", active);
+      this.setAttribute("aria-pressed", active);
       $(this).find(".tidy-category-count").text(counts[category]);
     });
   }
@@ -157,12 +212,21 @@ function setupModuleCategories($html, form) {
 
     const moduleId = moduleIdOf(packageEl);
     const override = overrides[moduleId];
-    setCategories(packageEl, Array.isArray(override) ? override : detectCategories(moduleId, packageEl));
+    setCategories(
+      packageEl,
+      Array.isArray(override) ? normalizeCategories(override) : detectCategories(moduleId, packageEl)
+    );
   });
 
   filterBar.on("click", ".tidy-category", function (e) {
     e.preventDefault();
-    activeFilter = $(this).attr("data-category");
+    // "All" clears the selection, every other button toggles its category
+    const category = $(this).attr("data-category");
+    if (category === "all") {
+      activeFilters.clear();
+    } else if (!activeFilters.delete(category)) {
+      activeFilters.add(category);
+    }
     refreshFilter();
   });
 

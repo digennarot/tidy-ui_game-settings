@@ -7,7 +7,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "lint:md": "markdownlint . --ignore node_modules"
+    "lint:md": "markdownlint . --ignore node_modules",
+    "update:categories": "node scripts/update-package-categories.mjs"
   },
   "repository": {
     "type": "git",

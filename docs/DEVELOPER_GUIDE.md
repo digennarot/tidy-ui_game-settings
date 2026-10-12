@@ -76,3 +76,15 @@ During testing, global variables like `Hooks`, `game`, `ui`, and DOM manipulatio
 ## Build and Releases
 
 Automated releases are handled via GitHub Actions in `.github/workflows/release.yml`. When adding new features, increment the `"version"` field inside `module.json` and `package.json` and ensure tests pass properly.
+
+### Official Package Categories
+
+`src/data/package-categories.js` lists the module ids (systems and worlds are skipped) that foundryvtt.com files under the *Adventures*, *Audio Improvements* and *Visual Effects* categories. Module categorization uses it alongside the manifest and keyword checks. Refresh it with:
+
+```bash
+npm run update:categories
+```
+
+The script reads the public `https://foundryvtt.com/packages/tag/<tag>` pages, waiting 4 seconds between requests as `robots.txt` asks, with a 30 second timeout per request. It stops without writing anything if the pager is not recognized, a tag has more than `MAX_PAGES` pages, or a category comes back empty or below 75% of the current data. Pass `-- --force` to accept an intended big drop.
+
+The *Update Package Categories* workflow (`.github/workflows/update-categories.yml`) runs the script on the 1st of every month (or manually), runs the tests and commits the result to master. Releases package the committed data as it is. To map more official categories, add them to `TAGS` in `scripts/update-package-categories.mjs`.

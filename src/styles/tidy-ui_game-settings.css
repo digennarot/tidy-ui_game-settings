@@ -330,6 +330,12 @@
   background: rgb(0 255 0 / 0.3);
 }
 
+#module-management .tidy-category-separator {
+  flex: 0 0 1px;
+  margin: 2px 2px;
+  background: rgb(0 0 0 / 0.3);
+}
+
 #module-management .tidy-category-count {
   opacity: 0.7;
   font-size: 0.85em;
