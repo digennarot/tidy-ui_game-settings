@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.74
 
 - Manifest URL moved to `releases/latest/download/module.json`; releases attach `module.json` and no longer push to master. Existing installs migrate automatically on their next update
 - Release workflow runs the tests before publishing and packages only runtime files
@@ -17,6 +17,7 @@
 - Localized import/export notifications
 - Corrected import help text (only JSON can be imported) and removed unused translation keys
 - Tests now run in CI
+- CI actions updated to Node 24 (`actions/checkout@v7`, `actions/setup-node@v7`)
 - Documentation now matches the implemented features
 
 ## 0.1.73
