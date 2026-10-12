@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+- Manifest URL moved to `releases/latest/download/module.json`; releases attach `module.json` and no longer push to master. Existing installs migrate automatically on their next update
+- Release workflow runs the tests before publishing and packages only runtime files
+- Added module categories in Manage Modules: a filter bar (PF2e, D&D, system agnostic, other systems, adventures, sounds, visual improvements) with counts, category tags on each module, and per-module overrides for GMs stored in the new `moduleCategories` world setting
+- **Changed:** "Check" and "Uncheck" now act only on the modules currently shown (category filter and Foundry's search/active filters); labels updated to match
+- Sorting, categories and the hidden "Deactivate All" button now survive Module Management re-renders
+- Import now reports how many modules were actually activated and warns about modules that are not installed
+- Added missing translations for German, Spanish, Japanese and Traditional Chinese
+- Release zip no longer bundles `node_modules`, tests or dev tooling
+- Stopped tracking `node_modules` and `coverage` in git
+- Fixed import/export modal handlers relying on global selectors
+- Prevented duplicate controls when the Module Management window re-renders
+- Escaped module ids when applying an import
+- Localized import/export notifications
+- Corrected import help text (only JSON can be imported) and removed unused translation keys
+- Tests now run in CI
+- Documentation now matches the implemented features
+
 ## 0.1.73
 
 - Foundry VTT 14 compatibility

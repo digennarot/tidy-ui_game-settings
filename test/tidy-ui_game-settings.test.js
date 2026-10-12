@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import $ from 'jquery';
 
 describe('tidy-ui_game-settings', () => {
@@ -10,6 +10,11 @@ describe('tidy-ui_game-settings', () => {
 
         // Re-import the file to trigger hook registrations for each test
         await import('../src/tidy-ui_game-settings.js');
+    });
+
+    afterEach(() => {
+        delete globalThis.game.modules;
+        delete globalThis.game.user;
     });
 
     it('registers the required hooks', () => {
@@ -106,5 +111,186 @@ describe('tidy-ui_game-settings', () => {
 
         // Export options should be visible
         expect(html.find('.export-options').css('display')).not.toBe('none');
+    });
+
+    it('does not inject controls twice on re-render', () => {
+        const html = $(`<form class="form"><ul id="module-list"></ul></form>`);
+
+        globalThis.Hooks.callAll('renderModuleManagement', null, html);
+        globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+        expect(html.find('.enhanced-module-management').length).toBe(1);
+        expect(html.find('#importExportModal').length).toBe(1);
+    });
+
+    it('activates modules from pasted JSON', () => {
+        const html = $(`
+      <form class="form">
+        <ul id="module-list">
+          <li class="package" data-module-id="mod-a">
+            <h3 class="package-title">Mod A</h3>
+            <input type="checkbox" name="mod-a" checked>
+          </li>
+          <li class="package" data-module-id="mod-b">
+            <h3 class="package-title">Mod B</h3>
+            <input type="checkbox" name="mod-b">
+          </li>
+        </ul>
+      </form>
+    `);
+
+        globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+        html.find('.modules-import').trigger('click');
+        html.find('#modalIO').val(JSON.stringify({ activeModules: [{ id: 'mod-b' }, { id: 'bad"id' }] }));
+        html.find('.modules-import-confirm').trigger('click');
+
+        expect(html.find('input[name="mod-a"]').prop('checked')).toBe(false);
+        expect(html.find('input[name="mod-b"]').prop('checked')).toBe(true);
+        expect(globalThis.ui.notifications.info).toHaveBeenCalledWith('TidyUI.activated');
+        expect(globalThis.game.i18n.format).toHaveBeenCalledWith('TidyUI.activated', { count: 1 });
+        expect(globalThis.ui.notifications.warn).toHaveBeenCalledWith('TidyUI.missingModules');
+        expect(globalThis.game.i18n.format).toHaveBeenCalledWith('TidyUI.missingModules', { count: 1 });
+    });
+
+    describe('module categories', () => {
+        const manifests = {
+            'pf2e-adventure': { title: 'Abomination Vaults', relationships: { systems: new Set([{ id: 'pf2e' }]) }, packs: new Set([{ type: 'Adventure' }]) },
+            'dnd-tool': { title: 'Midi QOL', relationships: { systems: new Set([{ id: 'dnd5e' }]) }, packs: new Set() },
+            'ambience': { title: 'Ambient Soundscapes', relationships: { systems: new Set() }, packs: new Set([{ type: 'Playlist' }]) },
+            'swade-tool': { title: 'Savage Helper', relationships: { systems: new Set([{ id: 'swade' }]) }, packs: new Set() },
+            'tidy-ui': { title: 'Tidy UI', description: 'A cleaner user interface with active effects support', relationships: { systems: new Set() }, packs: new Set() },
+            'fancy-fx': { title: 'Sequencer', description: '<p>Play visual effects on the canvas</p>', relationships: { systems: new Set() }, packs: new Set() },
+        };
+
+        const buildHtml = () => $(`
+      <form class="form">
+        <ul id="module-list">
+          ${Object.entries(manifests).map(([id, m]) => `
+          <li class="package" data-module-id="${id}">
+            <h3 class="package-title">${m.title}</h3>
+            <input type="checkbox" name="${id}">
+          </li>`).join('')}
+        </ul>
+      </form>
+    `);
+
+        const categoriesOf = (html, id) =>
+            html.find(`.package[data-module-id="${id}"]`).attr('data-tidy-categories').split(' ');
+
+        beforeEach(() => {
+            globalThis.game.modules = { get: (id) => manifests[id] };
+            globalThis.game.user = { isGM: true };
+        });
+
+        it('detects categories from manifests', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            expect(categoriesOf(html, 'pf2e-adventure')).toEqual(['pf2e', 'adventures']);
+            expect(categoriesOf(html, 'dnd-tool')).toEqual(['dnd']);
+            expect(categoriesOf(html, 'ambience')).toEqual(['agnostic', 'sounds']);
+            expect(categoriesOf(html, 'fancy-fx')).toEqual(['agnostic', 'visual']);
+            expect(categoriesOf(html, 'swade-tool')).toEqual(['other']);
+            expect(categoriesOf(html, 'tidy-ui')).toEqual(['agnostic']);
+            expect(html.find('.tidy-category[data-category="agnostic"] .tidy-category-count').text()).toBe('3');
+        });
+
+        it('filters the list and limits check all to the visible category', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            html.find('.tidy-category[data-category="pf2e"]').trigger('click');
+            expect(html.find('.package:not(.tidy-filtered-out)').length).toBe(1);
+
+            html.find('.enable-all-modules').trigger('click');
+            expect(html.find('input[name="pf2e-adventure"]').prop('checked')).toBe(true);
+            expect(html.find('input[name="dnd-tool"]').prop('checked')).toBe(false);
+
+            html.find('.tidy-category[data-category="all"]').trigger('click');
+            expect(html.find('.tidy-filtered-out').length).toBe(0);
+        });
+
+        it('saves manual category overrides', async () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            const pkg = html.find('.package[data-module-id="dnd-tool"]');
+            pkg.find('.tidy-category-edit').trigger('click');
+            pkg.find('.tidy-category-option[data-category="visual"]').trigger('click');
+
+            expect(categoriesOf(html, 'dnd-tool')).toEqual(['dnd', 'visual']);
+            await vi.waitFor(() =>
+                expect(globalThis.game.settings.set).toHaveBeenCalledWith(
+                    'tidy-ui_game-settings',
+                    'moduleCategories',
+                    { 'dnd-tool': ['dnd', 'visual'] }
+                )
+            );
+        });
+        it('skips modules hidden by Foundry when checking all', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            html.find('.package[data-module-id="dnd-tool"]')[0].hidden = true;
+            html.find('.enable-all-modules').trigger('click');
+
+            expect(html.find('input[name="dnd-tool"]').prop('checked')).toBe(false);
+            expect(html.find('input[name="ambience"]').prop('checked')).toBe(true);
+        });
+
+        it('rebuilds categories for a re-rendered package list and keeps the filter', () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+            html.find('.tidy-category[data-category="sounds"]').trigger('click');
+
+            // ApplicationV2 keeps the root element but replaces the package list
+            html.find('#module-list').replaceWith(buildHtml().find('#module-list'));
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            expect(html.find('.tidy-category-filter').length).toBe(1);
+            expect(html.find('.tidy-category.active').attr('data-category')).toBe('sounds');
+            expect(html.find('.package:not(.tidy-filtered-out)').length).toBe(1);
+            expect(html.find('.package').first().attr('data-module-id')).toBe('pf2e-adventure');
+        });
+
+        it('keeps every override when edits are made quickly', async () => {
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            for (const id of ['dnd-tool', 'ambience']) {
+                const pkg = html.find(`.package[data-module-id="${id}"]`);
+                pkg.find('.tidy-category-edit').trigger('click');
+                pkg.find('.tidy-category-option[data-category="visual"]').trigger('click');
+            }
+            await vi.waitFor(() => expect(globalThis.game.settings.set).toHaveBeenCalledTimes(2));
+
+            expect(globalThis.game.settings.set).toHaveBeenLastCalledWith(
+                'tidy-ui_game-settings',
+                'moduleCategories',
+                { 'dnd-tool': ['dnd', 'visual'], ambience: ['agnostic', 'sounds', 'visual'] }
+            );
+        });
+
+        it('hides the category editor from non-GM users', () => {
+            globalThis.game.user = { isGM: false };
+            const html = buildHtml();
+            globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+            expect(html.find('.tidy-tag').length).toBeGreaterThan(0);
+            expect(html.find('.tidy-category-edit').length).toBe(0);
+        });
+    });
+
+    it('rejects non-JSON paste on import', () => {
+        const html = $(`<form class="form"><ul id="module-list"></ul></form>`);
+
+        globalThis.Hooks.callAll('renderModuleManagement', null, html);
+
+        html.find('.modules-import').trigger('click');
+        html.find('#modalIO').val('Active Modules:\n----------\nMod A v1.0;');
+        html.find('.modules-import-confirm').trigger('click');
+
+        expect(globalThis.ui.notifications.error).toHaveBeenCalledWith('TidyUI.errorPasteFormat');
     });
 });

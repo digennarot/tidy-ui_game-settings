@@ -4,74 +4,62 @@ on:
   release:
     types: [published]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          # Ensure we checkout the branch rather than detached HEAD
-          # to safely commit back to it later if required.
-          # Note: Since the event is 'release', GITHUB_REF is the tag.
-          # But for the checkout itself we will leave it default which checks out the tag.
-          fetch-depth: 0
+# Never let two releases upload assets at the same time
+concurrency:
+  group: release
+  cancel-in-progress: false
 
-      - name: Get version from module.json
-        id: get-version
-        run: |
-          echo "version=$(jq -r '.version' module.json)" >> $GITHUB_OUTPUT
+permissions:
+  contents: write
+
+env:
+  MODULE_ID: tidy-ui_game-settings
+  TAG: ${{ github.event.release.tag_name }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
 
       - name: Verify version matches tag
         run: |
-          # Robust way to strip 'refs/tags/' and then an optional 'v' prefix
-          TAG_VERSION="${GITHUB_REF#refs/tags/}"
-          TAG_VERSION="${TAG_VERSION#v}"
-          MODULE_VERSION="${{ steps.get-version.outputs.version }}"
-          if [ "$TAG_VERSION" != "$MODULE_VERSION" ]; then
-            echo "Error: Tag version ($TAG_VERSION) doesn't match module.json version ($MODULE_VERSION)"
+          MODULE_VERSION="$(jq -r '.version' module.json)"
+          if [ "${TAG#v}" != "$MODULE_VERSION" ]; then
+            echo "::error::Tag version (${TAG#v}) doesn't match module.json version ($MODULE_VERSION)"
             exit 1
           fi
 
-      - name: Update module.json download URL
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Run tests
         run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/}"
-          
-          # Update the download URL in module.json
-          jq --arg url "https://github.com/digennarot/tidy-ui_game-settings/releases/download/$TAG_VERSION/tidy-ui_game-settings.zip" \
-             '.download = $url' module.json > module.json.tmp
-          
+          npm ci
+          npm test
+
+      - name: Set download URL
+        run: |
+          echo "DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/$TAG/$MODULE_ID.zip" >> "$GITHUB_ENV"
+
+      - name: Build module zip
+        run: |
+          jq --arg url "$DOWNLOAD_URL" '.download = $url' module.json > module.json.tmp
           mv module.json.tmp module.json
 
-      - name: Create module zip
-        run: |
-          # Create a directory with the correct module name
-          mkdir -p tidy-ui_game-settings
-          
-          # Copy all files except .git, .github, and the directory we just created
-          rsync -av --exclude='.git' --exclude='.github' --exclude='tidy-ui_game-settings' ./ tidy-ui_game-settings/
-          
-          # Create the zip file
-          zip -r tidy-ui_game-settings.zip tidy-ui_game-settings
-          
-          # Clean up
-          rm -rf tidy-ui_game-settings
+          # Whitelist of runtime files, so dev files never end up in the package
+          mkdir -p "dist/$MODULE_ID"
+          cp -r module.json src README.md CHANGELOG.md "dist/$MODULE_ID/"
+          (cd dist && zip -qr "../$MODULE_ID.zip" "$MODULE_ID")
+          unzip -l "$MODULE_ID.zip"
 
-      - name: Upload zip to release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: tidy-ui_game-settings.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # module.json on the release is what the manifest URL (releases/latest/download/module.json) serves
+      - name: Upload assets to release
+        run: gh release upload "$TAG" "$MODULE_ID.zip" module.json --clobber
 
-      - name: Commit updated module.json
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add module.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update download URL for ${GITHUB_REF#refs/tags/}"
-          git push origin HEAD:master

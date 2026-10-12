@@ -1,1 +1,4 @@
 sftp.json
+node_modules/
+coverage/
+*.zip

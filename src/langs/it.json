@@ -1,25 +1,39 @@
 {
-  "TidyUI.moduleSettingsActive" : {
-    "name" : "Attiva sempre la scheda Impostazioni Moduli",
-    "hint" : "Se ti capita di visitare spesso le impostazioni del moduli, potresti voler configurare questa opzione in modo da non dover fare clic per attivare la scheda ogni volta."
+  "TidyUI.hideDisableAll": {
+    "name": "Nascondi il pulsante \"Disattiva Tutti i Moduli\".",
+    "hint": "Seleziona questo se vuoi nascondere \"Disattiva Tutti i Moduli\" accanto al pulsante \"Salva\"."
   },
-  "TidyUI.hideDisableAll" : {
-    "name" : "Nascondi il pulsante \"Disattiva Tutti i Moduli\".",
-    "hint" : "Seleziona questo se vuoi nascondere \"Disattiva Tutti i Moduli\" accanto al pulsante \"Salva\"."
+  "TidyUI.uncheckAll": "Deseleziona i moduli mostrati (tranne Tidy UI)",
+  "TidyUI.checkAll": "Seleziona i moduli mostrati",
+  "TidyUI.export": "Esporta Elenco Moduli Attivi",
+  "TidyUI.import": "Importa Lista Moduli",
+  "TidyUI.toClipboard": "Copia come testo",
+  "TidyUI.toFile": "Salva come file JSON",
+  "TidyUI.fromFile": "Importa file JSON",
+  "TidyUI.activate": "Attiva Moduli",
+  "TidyUI.close": "Chiudi la finestra",
+  "TidyUI.notice": "Elenco dei moduli copiato negli appunti: ricordati di salvarlo!",
+  "TidyUI.paste": "Incolla qui il contenuto di un file JSON esportato, oppure carica un file JSON per impostare i moduli attivi",
+  "TidyUI.warning": "Attenzione:",
+  "TidyUI.instruction": "Per reimportare l'elenco dei moduli devi scaricare il file JSON. Copia come testo va bene solo per la pubblicazione su Discord o simili e non può essere importato.",
+  "TidyUI.warnNoData": "Fornisci i dati dei moduli da importare.",
+  "TidyUI.errorFileParse": "Impossibile leggere il file JSON. Controlla il formato del file.",
+  "TidyUI.errorJsonParse": "Impossibile leggere i dati JSON.",
+  "TidyUI.errorMissingActive": "Nel JSON importato manca l'array 'activeModules'.",
+  "TidyUI.errorPasteFormat": "Formato non riconosciuto. Incolla il codice JSON valido generato da un'esportazione.",
+  "TidyUI.activated": "{count} moduli attivati. Non dimenticare di salvare!",
+  "TidyUI.category": {
+    "all": "Tutti",
+    "pf2e": "PF2e",
+    "dnd": "D&D",
+    "agnostic": "Agnostici",
+    "other": "Altri sistemi",
+    "adventures": "Avventure",
+    "sounds": "Suoni",
+    "visual": "Migliorie visive"
   },
-  "TidyUI.uncheckAll" : "Deseleziona tutti i moduli tranne Tidy",
-  "TidyUI.checkAll" : "Seleziona tutti i moduli",
-  "TidyUI.export" : "Esporta Elenco Moduli Attivi",
-  "TidyUI.import" : "Importa Lista Moduli",
-  "TidyUI.toClipboard" :"Copia come testo",
-  "TidyUI.toFile" :"Salva come file JSON",
-  "TidyUI.fromFile" :"Importa file JSON",
-  "TidyUI.activate" :"Attiva Moduli",
-  "TidyUI.close" :"Chiudi la finestra",
-  "TidyUI.notice" :"Elenco dei moduli copiato negli appunti: ricordati di salvarlo!",
-  "TidyUI.paste" :"Incolla qui l'elenco dei moduli memorizzati (vecchio formato di testo) o carica un file JSON per impostare i moduli attivi",
-  "TidyUI.search" :"Inizia a digitare per filtrare i moduli",
-  "TidyUI.clear" :"Cancella campo di ricerca",
-  "TidyUI.warning" :"Attenzione:",
-  "TidyUI.instruction" : "Per reimportare l'elenco dei moduli devi scaricare il file JSON. Copia come testo va bene solo per la pubblicazione su Discord o simili. Se hai salvataggi nel vecchio formato di testo, verranno comunque riconosciuti quando vorrai ripristinarli."
+  "TidyUI.editCategories": "Modifica categorie",
+  "TidyUI.resetCategories": "Ripristina automatico",
+  "TidyUI.missingModules": "{count} moduli dell'elenco non sono installati in questo mondo.",
+  "TidyUI.errorSaveCategories": "Impossibile salvare le categorie dei moduli."
 }

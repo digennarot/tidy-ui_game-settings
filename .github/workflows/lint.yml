@@ -16,3 +16,5 @@ jobs:
         run: npm ci
       - name: Lint markdown files
         run: npm run lint:md
+      - name: Run tests
+        run: npm test

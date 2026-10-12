@@ -156,13 +156,6 @@
 /*  Mass Toggle Controls                     */
 /* ----------------------------------------- */
 
-#module-management .mass-toggle {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-block-end: 8px;
-}
-
 #module-management .disable-all-modules {
   flex: 1;
   border: 2px groove rgb(255 0 0 / 0.5);
@@ -311,4 +304,92 @@
 #module-management #importExportModal.export .export-options button,
 #module-management #importExportModal.import .import-options button {
   display: block;
+}
+/* ----------------------------------------- */
+/*  Module Categories                        */
+/* ----------------------------------------- */
+
+#module-management .tidy-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-block-end: 8px;
+}
+
+#module-management .tidy-category-filter .tidy-category {
+  flex: 1 1 auto;
+  inline-size: auto;
+  margin: 0;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+#module-management .tidy-category-filter .tidy-category.active {
+  border-color: rgb(0 255 0 / 0.5);
+  background: rgb(0 255 0 / 0.3);
+}
+
+#module-management .tidy-category-count {
+  opacity: 0.7;
+  font-size: 0.85em;
+}
+
+#module-management .package.tidy-filtered-out {
+  display: none !important;
+}
+
+#module-management .tidy-category-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: 28px;
+}
+
+#module-management .tidy-tag {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.15);
+  font-size: 10px;
+  line-height: 16px;
+}
+
+#module-management .tidy-tag-pf2e { background: rgb(90 20 140 / 0.35); }
+#module-management .tidy-tag-dnd { background: rgb(200 30 30 / 0.35); }
+#module-management .tidy-tag-agnostic { background: rgb(120 120 120 / 0.35); }
+#module-management .tidy-tag-other { background: rgb(150 100 60 / 0.35); }
+#module-management .tidy-tag-adventures { background: rgb(200 140 0 / 0.35); }
+#module-management .tidy-tag-sounds { background: rgb(0 120 200 / 0.35); }
+#module-management .tidy-tag-visual { background: rgb(0 160 100 / 0.35); }
+
+#module-management .tidy-category-edit {
+  font-size: 11px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+#module-management .tidy-category-edit:hover {
+  opacity: 1;
+}
+
+#module-management .tidy-category-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 6px 28px;
+}
+
+#module-management .tidy-category-editor button {
+  flex: 0 0 auto;
+  inline-size: auto;
+  margin: 0;
+  padding: 0 8px;
+  line-height: 22px;
+  font-size: 11px;
+}
+
+#module-management .tidy-category-editor .tidy-category-option[aria-pressed="true"] {
+  border-color: rgb(0 255 0 / 0.5);
+  background: rgb(0 255 0 / 0.3);
 }

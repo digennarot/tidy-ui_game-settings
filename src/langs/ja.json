@@ -1,26 +1,40 @@
 {
-    "Localization Provided By": "Brother Sharp",
-    "TidyUI.moduleSettingsActive" : {
-      "name" : "モジュール設定をつねに表示する",
-      "hint" : "コンフィグ設定を開く時、モジュール設定に行くのが多い場合、この設定を有効化することで一番最初に表示するタブをモジュール設定に固定できます。"
-    },
-    "TidyUI.hideDisableAll" : {
-      "name" : "「すべてのModを非有効化」ボタンを無効化",
-      "hint" : "「モジュール更新」ボタンの隣にある「すべてのModを非有効化」ボタンを無効化します。"
-    },
-    "TidyUI.uncheckAll" : "TidyUI以外のすべてのModを非有効化",
-    "TidyUI.checkAll" : "すべてのモジュールを選択",
-    "TidyUI.export" : "有効化モジュールリストをエクスポート",
-    "TidyUI.import" : "モジュールリストをインポート",
-    "TidyUI.toClipboard" :"テキストコピー",
-    "TidyUI.toFile" :"Jsonファイルを保存",
-    "TidyUI.fromFile" :"Jsonファイルを読み込み",
-    "TidyUI.activate" :"モジュール更新",
-    "TidyUI.close" :"ウィンドウを閉じる",
-    "TidyUI.notice" :"モジュールリストをクリップボードにコピーしました、どこかにペーストしてね！",
-    "TidyUI.paste" :"モジュールリストのテキストをここに貼り付けてください（従来）、またはJsonファイルを読み込んでモジュールを起動させてください。",
-    "TidyUI.search" :"検索",
-    "TidyUI.clear" :"検索クリア",
-    "TidyUI.warning" :"警告：",
-    "TidyUI.instruction" : "モジュールリストを書き出したい場合はJsonファイルをお勧めします。テキストのコピーはDiscord等に表示するときのみに便利です。従来のテキストコピー方式でモジュールリストを出力していても適切に読み込まれますのでご安心ください。"
-  }
+  "Localization Provided By": "Brother Sharp",
+  "TidyUI.hideDisableAll": {
+    "name": "「すべてのModを非有効化」ボタンを無効化",
+    "hint": "「モジュール更新」ボタンの隣にある「すべてのModを非有効化」ボタンを無効化します。"
+  },
+  "TidyUI.uncheckAll": "表示中のModを非有効化（TidyUI以外）",
+  "TidyUI.checkAll": "表示中のモジュールを選択",
+  "TidyUI.export": "有効化モジュールリストをエクスポート",
+  "TidyUI.import": "モジュールリストをインポート",
+  "TidyUI.toClipboard": "テキストコピー",
+  "TidyUI.toFile": "Jsonファイルを保存",
+  "TidyUI.fromFile": "Jsonファイルを読み込み",
+  "TidyUI.activate": "モジュール更新",
+  "TidyUI.close": "ウィンドウを閉じる",
+  "TidyUI.notice": "モジュールリストをクリップボードにコピーしました、どこかにペーストしてね！",
+  "TidyUI.paste": "エクスポートしたJsonの内容をここに貼り付けるか、Jsonファイルを読み込んでモジュールを有効化してください。",
+  "TidyUI.warning": "警告：",
+  "TidyUI.instruction": "モジュールリストを再度読み込むにはJsonファイルを保存してください。テキストのコピーはDiscord等に表示するときのみに便利で、インポートには使えません。",
+  "TidyUI.warnNoData": "インポートするモジュールデータを入力してください。",
+  "TidyUI.errorFileParse": "Jsonファイルを読み込めませんでした。ファイル形式を確認してください。",
+  "TidyUI.errorJsonParse": "Jsonデータを読み込めませんでした。",
+  "TidyUI.errorMissingActive": "インポートしたJsonに「activeModules」配列がありません。",
+  "TidyUI.errorPasteFormat": "形式を認識できません。エクスポートで生成した有効なJsonを貼り付けてください。",
+  "TidyUI.activated": "{count}個のモジュールを有効化しました。保存を忘れずに！",
+  "TidyUI.missingModules": "リスト内の{count}個のモジュールはこのワールドにインストールされていません。",
+  "TidyUI.category": {
+    "all": "すべて",
+    "pf2e": "PF2e",
+    "dnd": "D&D",
+    "agnostic": "システム非依存",
+    "other": "その他のシステム",
+    "adventures": "アドベンチャー",
+    "sounds": "サウンド",
+    "visual": "ビジュアル改善"
+  },
+  "TidyUI.editCategories": "カテゴリを編集",
+  "TidyUI.resetCategories": "自動に戻す",
+  "TidyUI.errorSaveCategories": "モジュールのカテゴリを保存できませんでした。"
+}

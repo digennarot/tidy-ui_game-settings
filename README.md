@@ -14,21 +14,14 @@ Enhanced spacing, alignment, and visual hierarchy throughout the settings interf
 
 ### Advanced Module Manager
 
-- **Toggle Module Information:** Quickly show or hide module descriptions and details for faster browsing
-- **Bulk Selection Controls:** "Check all" and "uncheck all" buttons for rapid module management (Tidy UI itself remains checked for stability)
+- **Module Categories:** Filter the module list by PF2e, D&D, system agnostic, other systems, adventures, sounds or visual improvements. Categories are detected automatically and GMs can correct them per module
+- **Bulk Selection Controls:** "Check" and "uncheck" buttons for the modules currently shown, so you can toggle a whole category at once (Tidy UI itself remains checked for stability)
 - **Alphabetical Sorting:** Modules are automatically sorted by display name for easier location
-
-### Collapsible Module Settings
-
-Individual module settings in the Settings Tab start in a collapsed state, allowing you to expand only what you need. This eliminates endless scrolling and makes finding specific settings much faster.
+- **Export / Import:** Save your active module list as JSON (or copy it as text for sharing) and restore it later
 
 ### Enhanced Interactions
 
 Click directly on setting titles to toggle their associated checkboxes—no need to precisely target small checkbox areas.
-
-### Consistent Organization
-
-All modules appear alphabetically sorted in both the Module Manager and Settings Tab, providing a predictable and organized experience.
 
 ## Documentation
 
@@ -38,7 +31,7 @@ All modules appear alphabetically sorted in both the Module Manager and Settings
 ## Compatibility
 
 - **Minimum Foundry Version:** v13
-- **Verified Foundry Version:** v13
+- **Verified Foundry Version:** v14
 - **Supported Languages:** English, Deutsch, Español, 正體中文, 日本語, Italiano
 
 ## Installation
@@ -51,7 +44,7 @@ All modules appear alphabetically sorted in both the Module Manager and Settings
 4. Paste the following URL into the **Manifest URL** field:
 
    ```text
-   https://raw.githubusercontent.com/digennarot/tidy-ui_game-settings/master/module.json
+   https://github.com/digennarot/tidy-ui_game-settings/releases/latest/download/module.json
    ```
 
 5. Click **Install**

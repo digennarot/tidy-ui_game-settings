@@ -10,21 +10,32 @@ The module automatically reorganizes the layout of the "Settings" tab and "Manag
 
 When you open the **Manage Modules** window, you will notice several new interaction options at the top:
 
-1. **Check All / Uncheck All Buttons:**
-   - **Check All:** Enables all modules installed on your server for the current game.
-   - **Uncheck All:** Disables all modules *except* for "Tidy UI - Game Settings" and "Tidy UI" (if installed). This acts as a safe reset, ensuring you do not lock yourself out of the Tidy UI interface.
+1. **Check / Uncheck Shown Modules Buttons:** These act only on the modules currently shown, after the category filter and Foundry's own search and active/inactive filters. With the **All** category and no search, they affect every module.
+   - **Check:** Enables the shown modules.
+   - **Uncheck:** Disables the shown modules *except* for "Tidy UI - Game Settings" and "Tidy UI" (if installed). This acts as a safe reset, ensuring you do not lock yourself out of the Tidy UI interface.
 
 2. **Hide "Disable All" Button:**
    - If you frequently misclick the default Foundry VTT "Deactivate All" button and wish to hide it, Tidy UI offers a setting for that.
-   - Go to **Game Settings > Configure Settings > Tidy UI - Game Settings** and check "**Hide 'Deactivate All' Button**".
+   - Go to **Game Settings > Configure Settings > Tidy UI - Game Settings** and check "**Hide 'Disable All Modules' Button**".
+
+### Module Categories
+
+A row of category buttons above the module list filters it to one category: **All**, **PF2e**, **D&D**, **System agnostic**, **Other systems**, **Adventures**, **Sounds** and **Visual improvements**. Each button shows how many modules it contains, and each module shows its categories as coloured tags. A module can belong to several categories.
+
+Categories are detected automatically:
+
+- **PF2e / D&D / Other systems:** from the systems the module declares in its manifest. Modules that declare no system are matched by keywords such as "pf2e" or "5e" in their name and description, and otherwise count as **System agnostic**.
+- **Adventures:** the module contains Adventure compendiums, or its name mentions an adventure or one-shot.
+- **Sounds:** the module contains Playlist compendiums, or its name mentions sounds, music or ambience.
+- **Visual improvements:** the name or description mentions visual effects, animations, lighting, particles and similar.
+
+Detection is a best guess. A GM can fix it with the tag icon next to a module's tags: toggle the categories that apply, or click **Reset to automatic** to go back to detection. These choices are saved for the world.
 
 ### Settings Sidebar Overhaul
 
 In the **Configure Settings** menu:
 
-- The settings are grouped more logically, making navigation intuitive.
-- Individual module settings start in a *collapsed* state.
-- You can expand only the modules you are currently configuring, which significantly reduces scrolling on servers with many modules.
+- Each module's settings are grouped into their own section.
 - **Easy Checkboxes:** You can click directly on a setting's label to toggle its associated checkbox, providing a larger click target.
 
 ## Module Import/Export

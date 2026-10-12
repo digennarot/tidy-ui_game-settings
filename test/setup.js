@@ -34,6 +34,7 @@ globalThis.Hooks = {
 globalThis.game = {
     i18n: {
         localize: vi.fn((key) => key),
+        format: vi.fn((key) => key),
     },
     settings: {
         get: vi.fn().mockImplementation((module, key) => {
@@ -41,6 +42,7 @@ globalThis.game = {
             return false;
         }),
         register: vi.fn(),
+        set: vi.fn(),
     },
 };
 

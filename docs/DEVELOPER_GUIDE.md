@@ -11,7 +11,7 @@ The module consists primarily of a single JavaScript file (`src/tidy-ui_game-set
 1. **`renderSettingsConfig`:**
    - Fires when the "Configure Settings" window is opened.
    - **DOM Changes:**
-     - Iterates through the settings elements and wraps groups into `<section class="module-settings-wrapper">` for the collapsible accordion styling.
+     - Iterates through the settings elements and wraps groups into `<section class="module-settings-wrapper">` so each module's settings form a distinct group.
      - Wraps label text in `<span>` tags to facilitate the expanded click targets that trigger sibling checkboxes.
 
 2. **`renderModuleManagement`:**

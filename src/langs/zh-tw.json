@@ -1,25 +1,39 @@
 {
-    "TidyUI.moduleSettingsActive" : {
-      "name" : "始終啓用Mod設定標籤.",
-      "hint" : "如果您會經常訪問Modules設定，則可能需要勾選此項，而不必點擊啓用Modules設定標籤."
-    },
-    "TidyUI.hideDisableAll" : {
-      "name" : "隱藏「禁用所有模塊」的按鈕。",
-      "hint" : "如果要隱藏「保存」按鈕旁邊的「禁用所有模塊」，請勾選此項。"
-    },
-    "TidyUI.uncheckAll" : "取消勾選除Tidy UI以外的所有Modules",
-    "TidyUI.checkAll" : "啓用所有Modules",
-    "TidyUI.export" : "滙出所有啓用中的Modules列表",
-    "TidyUI.import" : "滙入Modules列表",
-    "TidyUI.toClipboard" :"Copy as text",
-    "TidyUI.toFile" :"Save as JSON file",
-    "TidyUI.fromFile" :"Import JSON file",
-    "TidyUI.activate" :"啓用中的Modules",
-    "TidyUI.close" :"關閉視窗",
-    "TidyUI.notice" :"Modules列表已複製到剪貼板 - 請記得保存!",
-    "TidyUI.paste" :"將您儲存了的Modules列表粘貼到這裡!",
-    "TidyUI.search" :"開始輸入以過濾Modules",
-    "TidyUI.clear" :"清除搜索文字",
-    "TidyUI.warning" :"Warning:",
-    "TidyUI.instruction" : "In order to reimport your modules list you have to download the JSON file. Copy as text is only good for posting to Discord or alike. If you have saves in old text format it will still be recognized when you want to restore it."
-  }
+  "TidyUI.hideDisableAll": {
+    "name": "隱藏「禁用所有模塊」的按鈕。",
+    "hint": "如果要隱藏「保存」按鈕旁邊的「禁用所有模塊」，請勾選此項。"
+  },
+  "TidyUI.uncheckAll": "取消勾選顯示中的Modules（Tidy UI除外）",
+  "TidyUI.checkAll": "啓用顯示中的Modules",
+  "TidyUI.export": "滙出所有啓用中的Modules列表",
+  "TidyUI.import": "滙入Modules列表",
+  "TidyUI.toClipboard": "Copy as text",
+  "TidyUI.toFile": "Save as JSON file",
+  "TidyUI.fromFile": "Import JSON file",
+  "TidyUI.activate": "啓用中的Modules",
+  "TidyUI.close": "關閉視窗",
+  "TidyUI.notice": "Modules列表已複製到剪貼板 - 請記得保存!",
+  "TidyUI.paste": "將您儲存了的Modules列表粘貼到這裡!",
+  "TidyUI.warning": "Warning:",
+  "TidyUI.instruction": "如要重新滙入Modules列表，必須下載JSON檔案。以文字複製只適合貼到Discord等地方，無法用於滙入。",
+  "TidyUI.warnNoData": "請提供要滙入的Modules資料。",
+  "TidyUI.errorFileParse": "無法解析JSON檔案，請檢查檔案格式。",
+  "TidyUI.errorJsonParse": "無法解析JSON資料。",
+  "TidyUI.errorMissingActive": "滙入的JSON缺少「activeModules」陣列。",
+  "TidyUI.errorPasteFormat": "無法識別格式，請貼上由滙出產生的有效JSON。",
+  "TidyUI.activated": "已啓用{count}個Modules，請記得保存！",
+  "TidyUI.missingModules": "列表中有{count}個Modules未安裝於此世界。",
+  "TidyUI.category": {
+    "all": "全部",
+    "pf2e": "PF2e",
+    "dnd": "D&D",
+    "agnostic": "不限系統",
+    "other": "其他系統",
+    "adventures": "冒險",
+    "sounds": "音效",
+    "visual": "視覺改善"
+  },
+  "TidyUI.editCategories": "編輯分類",
+  "TidyUI.resetCategories": "重設為自動",
+  "TidyUI.errorSaveCategories": "無法保存Modules分類。"
+}
