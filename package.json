@@ -1,6 +1,6 @@
 {
   "name": "tidy-ui_game-settings",
-  "version": "0.1.74",
+  "version": "0.1.75",
   "description": "A comprehensive Foundry VTT module that enhances the usability and visual clarity of the game settings interface, making configuration management more intuitive and efficient.",
   "main": "index.js",
   "scripts": {

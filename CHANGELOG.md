@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.75
 
 - Category filters can be combined: buttons add up within the systems and content groups and narrow down across them (PF2e + Adventures = PF2e adventures)
 - Module categories now use the official foundryvtt.com package categories (Adventures, Audio Improvements, Visual Effects) for modules, bundled with the module and refreshed monthly by a workflow, alongside the existing manifest and keyword detection. The official Adventures tag only counts for modules shipping scenes or adventures
